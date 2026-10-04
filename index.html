@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4a2c21">
 <title>성공하는 인생의 비밀 · STAMP TOUR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
@@ -19,27 +20,29 @@
     background:
       repeating-linear-gradient(0deg, rgba(244,163,64,.16) 0 24px, transparent 24px 48px),
       repeating-linear-gradient(90deg, rgba(244,163,64,.16) 0 24px, transparent 24px 48px), #fff3e2;
-    min-height:100vh;
+    min-height:100vh; overflow-x:hidden;
   }
   h1,h2,h3,.jua{font-family:'Jua',sans-serif;font-weight:400}
-  button{font-family:inherit;cursor:pointer}
+  button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   input,select,textarea{font-family:inherit;font-size:16px}
-  .wrap{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+  .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 48px}
   .board{
     background:var(--paper); border-radius:22px; padding:28px 22px 26px; position:relative;
     box-shadow:0 0 0 10px #efe0c8, 0 12px 30px rgba(74,44,33,.18); margin-top:34px;
   }
+  .board.shake{animation:shake .32s ease-out}
+  @keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-5px,3px)}40%{transform:translate(4px,-3px)}60%{transform:translate(-3px,2px)}80%{transform:translate(2px,-1px)}}
   .clip{position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:170px;height:46px;
     background:var(--coral);border-radius:10px;box-shadow:inset 0 -6px 0 rgba(0,0,0,.12)}
   .clip:after{content:"";position:absolute;left:50%;top:14px;transform:translateX(-50%);width:110px;height:34px;
     border:7px solid var(--gold);border-top:none;border-radius:0 0 16px 16px}
   .sub{color:var(--coral);text-align:center;margin:8px 0 2px;font-size:17px}
   .title{color:var(--brown);text-align:center;margin:0 0 4px;font-size:34px}
-  .title b{color:var(--coral)}
   .footer{text-align:center;color:var(--muted);font-size:13px;margin-top:22px;letter-spacing:2px}
   .btn{border:none;border-radius:12px;padding:12px 18px;font-size:16px;background:var(--brown);color:#fff}
   .btn:hover{background:var(--brown2)}
   .btn.coral{background:var(--coral)} .btn.light{background:#f1e4d3;color:var(--brown)}
+  .btn.danger{background:#fbe3df;color:#a3281d} .btn.danger:hover{background:#f6cfc8}
   .btn.sm{padding:7px 12px;font-size:14px;border-radius:9px}
   .btn:disabled{opacity:.5;cursor:default}
   .linkbtn{background:none;border:none;color:var(--muted);text-decoration:underline;font-size:13px}
@@ -52,28 +55,61 @@
   .err{color:var(--red);font-size:14px;min-height:20px;text-align:center}
   .demo{background:#fff1c9;border:1px dashed var(--gold);color:#7a5a12;border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:12px;text-align:center}
 
-  /* 학생 스탬프판 */
+  /* ===== 학생 스탬프판 ===== */
   .who{text-align:center;margin:6px 0 12px;font-size:18px}
   .who b{font-family:'Jua';font-size:22px;color:var(--brown)}
   .count{text-align:center;font-family:'Jua';font-size:20px;color:var(--brown)}
-  .count .big{font-size:44px;color:var(--coral)}
+  .count .big{font-size:44px;color:var(--coral);display:inline-block}
+  .count .big.bump{animation:bump .5s ease-out}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
   .bar{height:16px;background:#f1e4d3;border-radius:99px;overflow:hidden;margin:8px auto 22px;max-width:520px}
-  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--coral));border-radius:99px;transition:width .6s}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--coral));border-radius:99px;transition:width .8s ease}
+  .newmsg{text-align:center;margin:-10px 0 14px;font-family:'Jua';color:var(--red);font-size:18px;min-height:24px}
   .stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px;justify-items:center}
-  .stamp{width:150px;text-align:center}
+  .stamp{width:150px;text-align:center;position:relative}
   .ring{width:128px;height:128px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;
     flex-direction:column;border:4px dashed #e3d3bf;color:#c9b6a1;position:relative;background:#fffaf2}
   .ring .nm{font-family:'Jua';font-size:16px;padding:0 10px;line-height:1.2;word-break:keep-all}
-  .stamp.on .ring{border:5px double var(--red);color:var(--red);background:rgba(210,59,47,.05);transform:rotate(-10deg);
-    animation:pop .45s ease-out}
+  .stamp.on .ring{border:5px double var(--red);color:var(--red);background:rgba(210,59,47,.05);transform:rotate(-10deg)}
   .stamp.on .ring .ok{font-family:'Jua';font-size:22px;letter-spacing:1px}
   .stamp.on .ring .nm{font-size:13px}
   .stamp .meta{font-size:12px;color:var(--muted);margin-top:8px;min-height:16px}
-  @keyframes pop{0%{transform:scale(1.6) rotate(-10deg);opacity:0}70%{transform:scale(.92) rotate(-10deg);opacity:1}100%{transform:scale(1) rotate(-10deg)}}
+  /* 새로 찍히는 도장만: 날아와서 쾅! */
+  .stamp.new .slot{position:absolute;left:50%;top:0;width:128px;height:128px;margin-left:-64px;border-radius:50%;border:4px dashed #e3d3bf;background:#fffaf2;display:flex;align-items:center;justify-content:center;color:#c9b6a1}
+  .stamp.new .slot .nm{font-family:'Jua';font-size:14px;padding:0 8px;line-height:1.2;word-break:keep-all}
+  .stamp.new .ring{animation:slam .7s cubic-bezier(.3,.7,.4,1) both;animation-delay:var(--d);z-index:2}
+  @keyframes slam{
+    0%{transform:translate(140px,-320px) rotate(35deg) scale(2.6);opacity:0;filter:blur(2px)}
+    15%{opacity:1;filter:blur(0)}
+    60%{transform:translate(0,0) rotate(-10deg) scale(.82)}
+    75%{transform:rotate(-10deg) scale(1.1)}
+    100%{transform:rotate(-10deg) scale(1);opacity:1}
+  }
+  .stamp.new .ring:after{content:"";position:absolute;inset:-6px;border-radius:50%;border:6px solid rgba(210,59,47,.45);opacity:0;
+    animation:splash .55s ease-out both;animation-delay:calc(var(--d) + .42s)}
+  @keyframes splash{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+  .bang{position:absolute;right:-4px;top:-14px;font-family:'Jua';font-size:26px;color:var(--coral);opacity:0;pointer-events:none;z-index:3;
+    text-shadow:2px 2px 0 #fff,-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff}
+  .stamp.new .bang{animation:bang .9s ease-out both;animation-delay:calc(var(--d) + .4s)}
+  @keyframes bang{0%{opacity:0;transform:scale(.3) rotate(-15deg)}25%{opacity:1;transform:scale(1.25) rotate(8deg)}70%{opacity:1;transform:scale(1) rotate(8deg)}100%{opacity:0;transform:translateY(-14px) scale(1) rotate(8deg)}}
+  .stamp.new .meta{animation:fadein .4s both;animation-delay:calc(var(--d) + .6s)}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  /* START / FINISH 표지판 */
+  .stamp.sign .ring{border:none;background:none;width:128px;height:128px}
+  .stamp.sign svg{width:100%;height:100%;overflow:visible}
+  .stamp.sign .meta{font-family:'Jua';color:var(--brown2);font-size:14px}
+  .stamp.finish.goal .ring{animation:goal 1.2s ease-in-out infinite;filter:drop-shadow(0 0 10px rgba(244,186,47,.85))}
+  @keyframes goal{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .start .chev{animation:chev 1.1s ease-in-out infinite}
+  @keyframes chev{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
   .done{margin:24px auto 0;max-width:520px;background:var(--brown);color:#fff;border-radius:16px;padding:18px;text-align:center}
   .done h3{margin:0 0 6px;font-size:26px;color:var(--gold)}
+  .sndbtn{position:absolute;right:16px;top:14px;background:#f1e4d3;border:none;border-radius:10px;padding:6px 9px;font-size:16px}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:20;overflow:hidden}
+  .confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 
-  /* 교사 */
+  /* ===== 교사 ===== */
   .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 16px}
   .tab{border:none;background:#f1e4d3;color:var(--brown);padding:9px 14px;border-radius:10px;font-size:15px}
   .tab.on{background:var(--brown);color:#fff}
@@ -81,34 +117,86 @@
   .card{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
   .card .k{font-size:13px;color:var(--muted)} .card .v{font-family:'Jua';font-size:28px;color:var(--brown)}
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-  .toolbar input{padding:8px 10px;border:2px solid var(--line);border-radius:10px}
-  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .toolbar input[type=text],.toolbar input:not([type]),.toolbar select{padding:8px 10px;border:2px solid var(--line);border-radius:10px;background:#fff}
+  .chk{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--brown2)}
+  .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;max-height:70vh}
   table{border-collapse:collapse;width:100%;font-size:14px}
   th,td{border-bottom:1px solid #f3e8da;padding:8px 6px;text-align:center;white-space:nowrap}
-  th{background:var(--cream);position:sticky;top:0;font-weight:400;font-family:'Jua';color:var(--brown)}
+  th{background:var(--cream);position:sticky;top:0;font-weight:400;font-family:'Jua';color:var(--brown);z-index:1}
   th small{display:block;font-family:'Gowun Dodum';font-size:11px;color:var(--muted)}
   td.nm{text-align:left;padding-left:10px}
+  .namebtn{background:none;border:none;color:var(--brown);font-size:14px;text-decoration:underline dotted;padding:0}
   .cell{width:30px;height:30px;border-radius:50%;border:2px dashed #e0cdb6;background:#fff;color:transparent;font-size:15px;line-height:26px}
   .cell.on{border:2px solid var(--red);background:var(--red);color:#fff}
   .cell:hover{border-color:var(--orange)}
   .pill{display:inline-block;padding:2px 9px;border-radius:99px;background:#f1e4d3;font-size:13px}
   .pill.full{background:var(--green);color:#fff}
-  .colbtn{display:block;margin:4px auto 0;font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--brown2)}
+  .colbtns{display:flex;gap:3px;justify-content:center;margin-top:4px}
+  .colbtn{font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--brown2)}
+  .colbtn.x{color:#a3281d}
   textarea{width:100%;min-height:170px;border:2px solid var(--line);border-radius:12px;padding:10px;font-size:15px}
   .help{font-size:13px;color:var(--muted);line-height:1.6}
+  .sec{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;background:#fff}
+  .sec h3{margin:0 0 6px;color:var(--brown);font-size:19px}
+  .sec.red{border-color:#f0c2bb;background:#fff7f5}
   .cfgrow{display:grid;grid-template-columns:40px 1.3fr 1fr 1.6fr 36px;gap:6px;margin-bottom:6px;align-items:center}
   .cfgrow input{padding:8px;border:2px solid var(--line);border-radius:9px;width:100%}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--brown);color:#fff;padding:10px 18px;border-radius:12px;
-    font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
-  .toast.show{opacity:1}
+  .qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+  .qbtn{border:2px dashed #e0cdb6;background:#fff;border-radius:14px;padding:12px 6px;font-size:15px;color:var(--brown);min-height:64px}
+  .qbtn b{display:block;font-family:'Jua';font-size:20px}
+  .qbtn.on{background:var(--red);border:2px solid var(--red);color:#fff}
+  .log{list-style:none;margin:0;padding:0;max-height:320px;overflow:auto}
+  .log li{padding:6px 2px;border-bottom:1px dashed var(--line);font-size:14px}
+  .log time{color:var(--muted);font-size:12px;margin-right:8px}
+  .modal{position:fixed;inset:0;background:rgba(43,33,28,.45);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
+  .mbox{background:var(--paper);border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:20px}
+  .mbox h3{margin:0 0 4px;color:var(--brown);font-size:22px}
+  .mrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--brown);color:#fff;padding:10px 16px;border-radius:12px;
+    font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:40;display:flex;gap:12px;align-items:center}
+  .toast.show{opacity:1;pointer-events:auto}
+  .toast button{background:var(--gold);color:var(--brown);border:none;border-radius:8px;padding:5px 10px;font-size:14px}
   .slips{display:none}
+  /* ===== 태블릿 ===== */
+  @media (max-width:820px){
+    .wrap{padding:20px 12px 40px}
+    .board{padding:24px 16px 22px}
+    .cards{grid-template-columns:repeat(2,1fr)}
+  }
+  /* ===== 휴대폰 (학생 대부분) ===== */
   @media (max-width:560px){
-    .title{font-size:27px} .stamps{grid-template-columns:repeat(2,1fr);gap:12px}
-    .stamp{width:auto} .ring{width:112px;height:112px}
+    .wrap{padding:14px 10px calc(28px + env(safe-area-inset-bottom))}
+    .board{padding:24px 12px 18px;border-radius:18px;box-shadow:0 0 0 6px #efe0c8,0 8px 20px rgba(74,44,33,.16);margin-top:30px}
+    .clip{width:130px;height:38px;top:-24px} .clip:after{width:84px;height:28px;border-width:6px;top:12px}
+    .sub{font-size:14px} .title{font-size:25px}
+    .who{font-size:15px} .who b{font-size:19px}
+    .count{font-size:16px} .count .big{font-size:38px}
+    .bar{height:12px;margin:6px 4px 18px}
+    .stamps{grid-template-columns:repeat(3,1fr);gap:10px 6px}
+    .stamp{width:100%}
+    .ring,.stamp.sign .ring,.stamp.new .slot{width:min(27vw,104px);height:min(27vw,104px)}
+    .stamp.new .slot{margin-left:calc(min(27vw,104px) / -2)}
+    .ring{border-width:3px}
+    .ring .nm{font-size:13px;padding:0 6px}
+    .stamp.on .ring .ok{font-size:15px} .stamp.on .ring .nm{font-size:11px}
+    .stamp .meta{font-size:11px;margin-top:5px;line-height:1.3}
+    .bang{font-size:20px;top:-10px;right:0}
+    .btn{padding:13px 16px}
+    .sndbtn{right:10px;top:10px}
+    .tab{padding:9px 11px;font-size:14px}
+    .toolbar input,.toolbar select{flex:1 1 140px}
+    .cards{gap:8px} .card{padding:10px} .card .v{font-size:24px}
+    .qgrid{grid-template-columns:repeat(3,1fr)}
+    .mbox{padding:16px;border-radius:16px}
     .cfgrow{grid-template-columns:30px 1fr 36px} .cfgrow .d,.cfgrow .ds{grid-column:2/3}
+    .toast{left:10px;right:10px;transform:none;bottom:calc(12px + env(safe-area-inset-bottom));justify-content:space-between}
+  }
+  @media (max-width:360px){ .stamps{grid-template-columns:repeat(2,1fr)} .ring,.stamp.sign .ring,.stamp.new .slot{width:118px;height:118px} .stamp.new .slot{margin-left:-59px} }
+  @media (prefers-reduced-motion:reduce){
+    .stamp.new .ring,.stamp.new .ring:after,.stamp.new .bang,.board.shake{animation:none!important}
   }
   @media print{
-    body{background:#fff} .wrap,.toast{display:none!important}
+    body{background:#fff} .wrap,.toast,.modal{display:none!important}
     .slips{display:grid!important;grid-template-columns:repeat(3,1fr);gap:0}
     .slip{border:1px dashed #999;padding:12px 10px;height:46mm;font-size:13px;page-break-inside:avoid}
     .slip b{font-size:16px} .slip .pin{font-size:26px;letter-spacing:4px;font-weight:bold;margin:6px 0}
@@ -122,8 +210,7 @@
 
 <script type="module">
 /* =========================================================
-   1) Firebase 설정 — Firebase 콘솔 > 프로젝트 설정 > 웹 앱에서 복사해 붙여넣기
-      apiKey가 "YOUR_API_KEY" 그대로면 '체험(데모) 모드'로 동작합니다.
+   Firebase 설정 — apiKey가 "YOUR_API_KEY"면 체험(데모) 모드
    ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCvgidm2U4BJqZ6sxT9YlNhRrrVhzJNGoQ",
@@ -134,7 +221,6 @@ const firebaseConfig = {
   appId: "1:53897109098:web:654ea8293ce4204b8f3413"
 };
 const APP_TITLE = "성공하는 인생의 비밀";
-const SCHOOL = "우신중학교 3학년부";
 const SALT = "woosin-2026-stamp";          // 바꾸면 기존 PIN이 모두 무효가 되니 처음에만 수정
 const DEMO = firebaseConfig.apiKey === "YOUR_API_KEY";
 const DEMO_TEACHER_PW = "1234";
@@ -155,7 +241,17 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pad2 = n => String(n).padStart(2, "0");
 const keyOf = (cls, num) => `${Number(cls)}-${pad2(Number(num))}`;
-function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 1800); }
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+function toast(msg, actionLabel, action) {
+  const t = $("#toast");
+  t.innerHTML = `<span>${esc(msg)}</span>${actionLabel ? `<button id="tact">${esc(actionLabel)}</button>` : ""}`;
+  if (actionLabel) $("#tact").onclick = () => { t.classList.remove("show"); action(); };
+  t.classList.add("show"); clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), actionLabel ? 6000 : 1900);
+}
 async function hashId(cls, num, pin) {
   const raw = `${SALT}|${Number(cls)}|${Number(num)}|${String(pin).trim()}`;
   if (window.crypto?.subtle) {
@@ -165,53 +261,138 @@ async function hashId(cls, num, pin) {
   let h = 5381; for (const c of raw) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return "x" + h.toString(16);
 }
 const randPin = () => String(Math.floor(1000 + Math.random() * 9000));
-function fmtTime(v) {
-  if (!v) return "";
-  const d = typeof v === "number" ? new Date(v) : v.toDate ? v.toDate() : new Date(v);
-  return `${d.getMonth() + 1}/${d.getDate()}`;
+function toMs(v) {
+  if (!v) return 0;
+  if (typeof v === "number") return v;
+  if (v.toMillis) return v.toMillis();
+  if (v.seconds) return v.seconds * 1000;
+  const t = Date.parse(v); return isNaN(t) ? Date.now() : t;
+}
+const fmtDay = v => { const d = new Date(toMs(v)); return `${d.getMonth() + 1}/${d.getDate()}`; };
+const fmtFull = v => { const d = new Date(toMs(v)); return `${d.getMonth() + 1}/${d.getDate()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+function download(name, text, type = "text/csv") {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click();
+}
+const csvText = rows => "﻿" + rows.map(r => r.map(c => `"${String(c ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+const today = () => { const d = new Date(); return `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}_${pad2(d.getHours())}${pad2(d.getMinutes())}`; };
+
+/* ---------------- 효과음 ---------------- */
+let AC = null;
+const soundOn = () => LS.get("st_sound", true);
+function ac() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); return AC; } catch { return null; } }
+function noise(a, dur, gain, filt) {
+  const n = a.createBufferSource(), b = a.createBuffer(1, Math.floor(a.sampleRate * dur), a.sampleRate), d = b.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const g = a.createGain(); n.buffer = b; g.gain.value = gain;
+  if (filt) { n.connect(filt); filt.connect(g); } else n.connect(g);
+  g.connect(a.destination); return { n, g };
+}
+const SFX = {
+  whoosh() {           // 도장이 날아오는 소리
+    if (!soundOn()) return; const a = ac(); if (!a) return; const t = a.currentTime;
+    const f = a.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 1.2;
+    f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(2600, t + 0.35);
+    const { n, g } = noise(a, 0.42, 0.0001, f);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.25); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+    n.start(t);
+  },
+  thump() {            // 쾅!
+    if (!soundOn()) return; const a = ac(); if (!a) return; const t = a.currentTime;
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.25);
+    g.gain.setValueAtTime(1, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + 0.34);
+    const f = a.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 1800;
+    const { n, g: ng } = noise(a, 0.09, 0.5, f); ng.gain.setValueAtTime(0.5, t); ng.gain.exponentialRampToValueAtTime(0.001, t + 0.09); n.start(t);
+  },
+  fanfare() {          // 완주 축하
+    if (!soundOn()) return; const a = ac(); if (!a) return; const t = a.currentTime;
+    [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5].forEach((fr, i) => {
+      const o = a.createOscillator(), g = a.createGain(), st = t + [0, .12, .24, .36, .56, .68][i], du = i === 5 ? .6 : .14;
+      o.type = "triangle"; o.frequency.value = fr;
+      g.gain.setValueAtTime(0.0001, st); g.gain.exponentialRampToValueAtTime(0.35, st + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, st + du);
+      o.connect(g).connect(a.destination); o.start(st); o.stop(st + du + 0.05);
+    });
+  },
+  tick(on) {           // 교사 화면 찍기/지우기
+    if (!soundOn()) return; const a = ac(); if (!a) return; const t = a.currentTime;
+    const o = a.createOscillator(), g = a.createGain(); o.type = "square";
+    o.frequency.setValueAtTime(on ? 660 : 330, t); o.frequency.exponentialRampToValueAtTime(on ? 990 : 220, t + 0.08);
+    g.gain.setValueAtTime(0.08, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + 0.12);
+  }
+};
+function confetti() {
+  const box = document.createElement("div"); box.className = "confetti";
+  const colors = ["#e0573f", "#f4ba2f", "#f4a340", "#3b8f5a", "#4a2c21", "#d23b2f"];
+  for (let i = 0; i < 90; i++) {
+    const p = document.createElement("i");
+    p.style.left = Math.random() * 100 + "vw"; p.style.background = colors[i % colors.length];
+    p.style.animationDuration = 2.2 + Math.random() * 1.8 + "s"; p.style.animationDelay = Math.random() * 0.6 + "s";
+    box.appendChild(p);
+  }
+  document.body.appendChild(box); setTimeout(() => box.remove(), 5000);
 }
 
-/* ---------------- 데이터 계층 ---------------- */
+/* ---------------- 데이터 계층 ----------------
+   공통 인터페이스
+   getConfig / saveConfig / watchStudent / login / logout / onAuth / watchAll
+   applyStamps([{id,sid,on}]) / clearStamps(ids, sid?) / upsertRoster(rows) / updateName(k,name)
+   removeStudent(k) / resetPin(k) / deleteAll() / restore(backup)
+------------------------------------------------ */
 let DB;
 function makeDemoDB() {
-  const L = {
-    get(k, d) { try { return JSON.parse(localStorage.getItem("st_" + k)) ?? d; } catch { return d; } },
-    set(k, v) { try { localStorage.setItem("st_" + k, JSON.stringify(v)); } catch {} }
-  };
+  const G = k => LS.get("st_" + k, k === "config" ? null : {}), S = (k, v) => LS.set("st_" + k, v);
   const subs = new Set(); const fire = () => subs.forEach(f => f());
   return {
-    async getConfig() { return L.get("config", { stamps: DEFAULT_STAMPS }); },
-    async saveConfig(c) { L.set("config", c); fire(); },
-    watchStudent(h, cb) { const f = () => cb(L.get("students", {})[h] || null); f(); subs.add(f); return () => subs.delete(f); },
-    async login(_e, pw) { if (pw !== DEMO_TEACHER_PW) throw new Error("비밀번호가 다릅니다 (체험 모드: 1234)"); L.set("auth", true); },
-    async logout() { L.set("auth", false); },
-    onAuth(cb) { cb(L.get("auth", false) ? { email: "demo" } : null); },
-    watchAll(cb) { const f = () => cb(Object.entries(L.get("students", {})).map(([id, s]) => ({ id, ...s })), L.get("pins", {})); f(); subs.add(f); return () => subs.delete(f); },
-    async setStamp(ids, sid, on) {
-      const st = L.get("students", {});
-      ids.forEach(id => { if (!st[id]) return; st[id].stamps = st[id].stamps || {}; if (on) st[id].stamps[sid] = Date.now(); else delete st[id].stamps[sid]; });
-      L.set("students", st); fire();
+    async getConfig() { return G("config") || { stamps: DEFAULT_STAMPS }; },
+    async saveConfig(c) { S("config", c); fire(); },
+    watchStudent(h, cb) { const f = () => cb(G("students")[h] || null); f(); subs.add(f); return () => subs.delete(f); },
+    async login(_e, pw) { if (pw !== DEMO_TEACHER_PW) throw new Error("비밀번호가 다릅니다 (체험 모드: 1234)"); LS.set("st_auth", true); },
+    async logout() { LS.set("st_auth", false); },
+    onAuth(cb) { cb(LS.get("st_auth", false) ? { email: "demo" } : null); },
+    watchAll(cb) { const f = () => cb(Object.entries(G("students")).map(([id, s]) => ({ id, ...s })), G("pins")); f(); subs.add(f); return () => subs.delete(f); },
+    async applyStamps(list) {
+      const st = G("students");
+      list.forEach(({ id, sid, on, at }) => { if (!st[id]) return; st[id].stamps = st[id].stamps || {}; if (on) st[id].stamps[sid] = at || Date.now(); else delete st[id].stamps[sid]; });
+      S("students", st); fire();
+    },
+    async clearStamps(ids, sid) {
+      const st = G("students");
+      ids.forEach(id => { if (!st[id]) return; if (sid) { if (st[id].stamps) delete st[id].stamps[sid]; } else st[id].stamps = {}; });
+      S("students", st); fire();
     },
     async upsertRoster(rows) {
-      const st = L.get("students", {}), pins = L.get("pins", {});
+      const st = G("students"), pins = G("pins");
       for (const r of rows) {
         const k = keyOf(r.cls, r.num); let p = pins[k];
         if (!p) { const pin = randPin(); p = { pin, id: await hashId(r.cls, r.num, pin), cls: r.cls, num: r.num }; }
         p.name = r.name; pins[k] = p;
         st[p.id] = { ...(st[p.id] || { stamps: {} }), cls: Number(r.cls), num: Number(r.num), name: r.name };
       }
-      L.set("students", st); L.set("pins", pins); fire();
+      S("students", st); S("pins", pins); fire();
+    },
+    async updateName(k, name) {
+      const st = G("students"), pins = G("pins"); if (!pins[k]) return;
+      pins[k].name = name; if (st[pins[k].id]) st[pins[k].id].name = name; S("students", st); S("pins", pins); fire();
     },
     async removeStudent(k) {
-      const st = L.get("students", {}), pins = L.get("pins", {});
+      const st = G("students"), pins = G("pins");
       if (pins[k]) { delete st[pins[k].id]; delete pins[k]; }
-      L.set("students", st); L.set("pins", pins); fire();
+      S("students", st); S("pins", pins); fire();
     },
     async resetPin(k) {
-      const st = L.get("students", {}), pins = L.get("pins", {}); const p = pins[k]; if (!p) return;
+      const st = G("students"), pins = G("pins"); const p = pins[k]; if (!p) return;
       const pin = randPin(), id = await hashId(p.cls, p.num, pin);
-      st[id] = st[p.id]; delete st[p.id]; pins[k] = { ...p, pin, id };
-      L.set("students", st); L.set("pins", pins); fire();
+      st[id] = st[p.id] || { cls: p.cls, num: p.num, name: p.name, stamps: {} }; delete st[p.id]; pins[k] = { ...p, pin, id };
+      S("students", st); S("pins", pins); fire();
+    },
+    async deleteAll() { S("students", {}); S("pins", {}); fire(); },
+    async restore(b) {
+      const st = G("students"), pins = G("pins");
+      (b.students || []).forEach(s => { const { id, ...rest } = s; st[id] = rest; });
+      Object.assign(pins, b.pins || {});
+      S("students", st); S("pins", pins); if (b.config) S("config", b.config); fire();
     }
   };
 }
@@ -223,26 +404,31 @@ async function makeFirebaseDB() {
   const A = await import(base + "firebase-auth.js");
   const app = initializeApp(firebaseConfig);
   const db = F.getFirestore(app), auth = A.getAuth(app);
-  const sdoc = id => F.doc(db, "students", id);
+  const sdoc = id => F.doc(db, "students", id), pdoc = k => F.doc(db, "pins", k);
+  const EST = { serverTimestamps: "estimate" };
+  async function runBatches(ops) {            // ops: (batch) => void
+    for (let i = 0; i < ops.length; i += 400) { const b = F.writeBatch(db); ops.slice(i, i + 400).forEach(f => f(b)); await b.commit(); }
+  }
   return {
     async getConfig() { const s = await F.getDoc(F.doc(db, "config", "main")); return s.exists() ? s.data() : { stamps: DEFAULT_STAMPS }; },
     async saveConfig(c) { await F.setDoc(F.doc(db, "config", "main"), c); },
-    watchStudent(h, cb) { return F.onSnapshot(sdoc(h), s => cb(s.exists() ? s.data() : null), () => cb(null)); },
+    watchStudent(h, cb) { return F.onSnapshot(sdoc(h), s => cb(s.exists() ? s.data(EST) : null), () => cb(null)); },
     async login(e, pw) { await A.signInWithEmailAndPassword(auth, e, pw); },
     async logout() { await A.signOut(auth); },
     onAuth(cb) { A.onAuthStateChanged(auth, u => cb(u)); },
     watchAll(cb) {
       let students = [], pins = {};
-      const u1 = F.onSnapshot(F.collection(db, "students"), s => { students = s.docs.map(d => ({ id: d.id, ...d.data() })); cb(students, pins); });
+      const u1 = F.onSnapshot(F.collection(db, "students"), s => { students = s.docs.map(d => ({ id: d.id, ...d.data(EST) })); cb(students, pins); });
       const u2 = F.onSnapshot(F.collection(db, "pins"), s => { pins = {}; s.docs.forEach(d => pins[d.id] = d.data()); cb(students, pins); });
       return () => { u1(); u2(); };
     },
-    async setStamp(ids, sid, on) {
-      for (let i = 0; i < ids.length; i += 400) {
-        const b = F.writeBatch(db);
-        ids.slice(i, i + 400).forEach(id => b.update(sdoc(id), { [`stamps.${sid}`]: on ? F.serverTimestamp() : F.deleteField(), updatedAt: F.serverTimestamp() }));
-        await b.commit();
-      }
+    async applyStamps(list) {
+      await runBatches(list.map(({ id, sid, on, at }) => b => b.update(sdoc(id), {
+        [`stamps.${sid}`]: on ? (at ? F.Timestamp.fromMillis(toMs(at)) : F.serverTimestamp()) : F.deleteField(), updatedAt: F.serverTimestamp()
+      })));
+    },
+    async clearStamps(ids, sid) {
+      await runBatches(ids.map(id => b => b.update(sdoc(id), sid ? { [`stamps.${sid}`]: F.deleteField(), updatedAt: F.serverTimestamp() } : { stamps: {}, updatedAt: F.serverTimestamp() })));
     },
     async upsertRoster(rows) {
       const ps = await F.getDocs(F.collection(db, "pins")); const pins = {}; ps.docs.forEach(d => pins[d.id] = d.data());
@@ -250,45 +436,73 @@ async function makeFirebaseDB() {
       for (const r of rows) {
         const k = keyOf(r.cls, r.num); let p = pins[k];
         if (!p) { const pin = randPin(); p = { pin, id: await hashId(r.cls, r.num, pin), cls: Number(r.cls), num: Number(r.num) }; }
-        p.name = r.name;
-        ops.push([F.doc(db, "pins", k), p, false]);
-        ops.push([sdoc(p.id), { cls: Number(r.cls), num: Number(r.num), name: r.name }, true]);
+        p.name = r.name; const pp = { ...p };
+        ops.push(b => b.set(pdoc(k), pp));
+        ops.push(b => b.set(sdoc(pp.id), { cls: Number(r.cls), num: Number(r.num), name: r.name }, { merge: true }));
       }
-      for (let i = 0; i < ops.length; i += 400) {
-        const b = F.writeBatch(db);
-        ops.slice(i, i + 400).forEach(([ref, data, merge]) => merge ? b.set(ref, data, { merge: true }) : b.set(ref, data));
-        await b.commit();
-      }
+      await runBatches(ops);
+    },
+    async updateName(k, name) {
+      const p = await F.getDoc(pdoc(k)); if (!p.exists()) return;
+      const b = F.writeBatch(db); b.update(pdoc(k), { name }); b.set(sdoc(p.data().id), { name }, { merge: true }); await b.commit();
     },
     async removeStudent(k) {
-      const p = await F.getDoc(F.doc(db, "pins", k)); if (!p.exists()) return;
-      const b = F.writeBatch(db); b.delete(sdoc(p.data().id)); b.delete(F.doc(db, "pins", k)); await b.commit();
+      const p = await F.getDoc(pdoc(k)); if (!p.exists()) return;
+      const b = F.writeBatch(db); b.delete(sdoc(p.data().id)); b.delete(pdoc(k)); await b.commit();
     },
     async resetPin(k) {
-      const ps = await F.getDoc(F.doc(db, "pins", k)); if (!ps.exists()) return; const p = ps.data();
+      const ps = await F.getDoc(pdoc(k)); if (!ps.exists()) return; const p = ps.data();
       const old = await F.getDoc(sdoc(p.id)); const pin = randPin(), id = await hashId(p.cls, p.num, pin);
       const b = F.writeBatch(db);
       b.set(sdoc(id), old.exists() ? old.data() : { cls: p.cls, num: p.num, name: p.name, stamps: {} });
-      b.delete(sdoc(p.id)); b.set(F.doc(db, "pins", k), { ...p, pin, id }); await b.commit();
+      b.delete(sdoc(p.id)); b.set(pdoc(k), { ...p, pin, id }); await b.commit();
+    },
+    async deleteAll() {
+      const [a, c] = await Promise.all([F.getDocs(F.collection(db, "students")), F.getDocs(F.collection(db, "pins"))]);
+      await runBatches([...a.docs, ...c.docs].map(d => b => b.delete(d.ref)));
+    },
+    async restore(bk) {
+      const ops = [];
+      (bk.students || []).forEach(s => {
+        const { id, ...rest } = s; const stamps = {};
+        Object.entries(rest.stamps || {}).forEach(([k, v]) => stamps[k] = F.Timestamp.fromMillis(toMs(v)));
+        ops.push(b => b.set(sdoc(id), { cls: rest.cls, num: rest.num, name: rest.name, stamps }));
+      });
+      Object.entries(bk.pins || {}).forEach(([k, p]) => ops.push(b => b.set(pdoc(k), p)));
+      await runBatches(ops);
+      if (bk.config) await F.setDoc(F.doc(db, "config", "main"), bk.config);
     }
   };
 }
 
-/* ---------------- 화면 ---------------- */
+/* ---------------- 공통 화면 ---------------- */
 const app = $("#app");
 let CFG = { stamps: DEFAULT_STAMPS };
 let USER = null;
 let unsub = null;
 const stop = () => { if (unsub) { unsub(); unsub = null; } };
 
-function frame(inner) {
-  return `<div class="board"><div class="clip"></div>
+function frame(inner, extra = "") {
+  return `<div class="board" id="board"><div class="clip"></div>${extra}
     <p class="sub jua">발자국마다 성공 경험을! STAMP TOUR</p>
     <h1 class="title">${esc(CFG.title || APP_TITLE)}</h1>
     ${inner}
     <div class="footer">WOOSHIN MIDDLE SCHOOL</div></div>`;
 }
 
+/* ================= 학생 ================= */
+const SIGN = (word, extra) => `<svg viewBox="0 0 120 120" aria-hidden="true">
+  <rect x="16" y="10" width="7" height="104" rx="2" fill="#f4ba2f" stroke="#4a2c21" stroke-width="2.5"/>
+  <rect x="97" y="10" width="7" height="104" rx="2" fill="#f4ba2f" stroke="#4a2c21" stroke-width="2.5"/>
+  <rect x="9" y="22" width="102" height="30" rx="3" fill="#fffdf8" stroke="#4a2c21" stroke-width="3"/>
+  <text x="60" y="43.5" text-anchor="middle" font-family="Jua, sans-serif" font-size="17" letter-spacing="2.5" fill="#4a2c21">${word}</text>${extra}</svg>`;
+const START_SVG = SIGN("START", `<g class="chev" fill="none" stroke="#f4ba2f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="44,68 54,78 44,88"/><polyline points="60,68 70,78 60,88"/></g>`);
+const FINISH_SVG = SIGN("FINISH", `<ellipse cx="62" cy="107" rx="20" ry="5.5" fill="#d23b2f" opacity=".85"/>
+  <rect x="47" y="92" width="30" height="12" rx="3" fill="#e0973f" stroke="#4a2c21" stroke-width="2.5"/>
+  <rect x="57" y="74" width="10" height="19" rx="2" fill="#f4ba2f" stroke="#4a2c21" stroke-width="2.5"/>
+  <circle cx="62" cy="68" r="8" fill="#e0973f" stroke="#4a2c21" stroke-width="2.5"/>`);
+const SEEN = new Map();   // 학생별로 화면에 이미 보여준 스탬프
 function showStudentLogin(msg = "") {
   stop();
   app.innerHTML = frame(`
@@ -306,42 +520,87 @@ function showStudentLogin(msg = "") {
     <p style="text-align:center;margin-top:18px"><button class="linkbtn" id="tlink">교사용</button></p>`);
   $("#sf").onsubmit = async e => {
     e.preventDefault();
+    ac();   // 휴대폰은 버튼을 누를 때 소리 권한이 열림
     const cls = $("#cls").value, num = $("#num").value, pin = $("#pin").value;
     $("#err").textContent = "확인 중…";
     const h = await hashId(cls, num, pin);
     let first = true;
     unsub = DB.watchStudent(h, s => {
       if (!s) { if (first) { stop(); $("#err").textContent = "반·번호·PIN을 다시 확인하세요."; } return; }
-      first = false; renderBoard(s);
+      first = false; renderBoard(s, h);
     });
   };
   $("#tlink").onclick = showTeacher;
 }
 
-function renderBoard(s) {
-  const list = CFG.stamps; const got = list.filter(x => s.stamps && s.stamps[x.id]).length;
-  const pct = list.length ? Math.round(got / list.length * 100) : 0;
+function renderBoard(s, h) {
+  const list = CFG.stamps;
+  const onIds = list.filter(x => s.stamps && s.stamps[x.id]).map(x => x.id);
+  // 이전에 본 스탬프(메모리 → 이 기기 기록 순). 처음이면 가진 스탬프 모두 '새로' 찍어줌
+  let prev = SEEN.has(h) ? SEEN.get(h) : LS.get("st_seen_" + h, null);
+  const newIds = prev === null ? onIds : onIds.filter(id => !prev.includes(id));
+  const prevCount = prev === null ? 0 : onIds.length - newIds.length;
+  SEEN.set(h, onIds); LS.set("st_seen_" + h, onIds);
+
+  const got = onIds.length, total = list.length;
+  const pct = n => total ? Math.round(n / total * 100) : 0;
+  const BASE = 0.35, GAP = 0.6;
+  let k = 0;
+  const html = list.map(x => {
+    const on = s.stamps && s.stamps[x.id];
+    const isNew = on && newIds.includes(x.id);
+    const d = isNew ? (BASE + GAP * k++) : 0;
+    return `<div class="stamp ${on ? "on" : ""} ${isNew ? "new" : ""}" style="--d:${d}s">
+      ${isNew ? `<div class="slot"><div class="nm">${esc(x.name)}</div></div>` : ""}
+      <div class="ring">${on ? `<div class="ok">SUCCESS</div>` : ""}<div class="nm">${esc(x.name)}</div></div>
+      ${isNew ? `<span class="bang">쾅!</span>` : ""}
+      <div class="meta">${on ? `✔ ${fmtDay(on)} 획득` : esc([x.date, x.desc].filter(Boolean).join(" · "))}</div></div>`;
+  }).join("");
+  const sound = soundOn();
+  const done = got === total && total;
+  const startTile = `<div class="stamp sign start"><div class="ring">${START_SVG}</div><div class="meta">출발!</div></div>`;
+  const finishTile = `<div class="stamp sign finish ${done && !newIds.length ? "goal" : ""}" id="finishTile"><div class="ring">${FINISH_SVG}</div>
+    <div class="meta" id="finishMeta">${done && !newIds.length ? "완주 성공!" : `${total - (newIds.length ? prevCount : got)}개 남았어요`}</div></div>`;
   app.innerHTML = frame(`
     <p class="who">3학년 ${esc(s.cls)}반 ${esc(s.num)}번 <b>${esc(s.name)}</b></p>
-    <div class="count"><span class="big">${got}</span> / ${list.length} 개 달성</div>
-    <div class="bar"><i style="width:${pct}%"></i></div>
-    <div class="stamps">${list.map(x => {
-      const on = s.stamps && s.stamps[x.id];
-      return `<div class="stamp ${on ? "on" : ""}"><div class="ring">${on ? `<div class="ok">SUCCESS</div>` : ""}<div class="nm">${esc(x.name)}</div></div>
-        <div class="meta">${on ? `✔ ${fmtTime(on)} 획득` : esc([x.date, x.desc].filter(Boolean).join(" · "))}</div></div>`;
-    }).join("")}</div>
-    ${got === list.length && list.length ? `<div class="done"><h3>스탬프 투어를 완성한 당신!</h3>고등학교를 향한 그 발걸음 성공적! 사제동행 가요제 날 시상합니다.</div>` : ""}
-    <p style="text-align:center;margin-top:22px"><button class="btn light sm" id="out">나가기</button></p>`);
+    <div class="count"><span class="big" id="cnt">${newIds.length ? prevCount : got}</span> / ${total} 개 달성</div>
+    <div class="bar"><i id="barfill" style="width:${pct(newIds.length ? prevCount : got)}%"></i></div>
+    <div class="newmsg" id="newmsg"></div>
+    <div class="stamps">${startTile}${html}${finishTile}</div>
+    <div id="donebox"></div>
+    <p style="text-align:center;margin-top:22px"><button class="btn light sm" id="out">나가기</button></p>`,
+    `<button class="sndbtn" id="snd" title="효과음">${sound ? "🔊" : "🔈"}</button>`);
   $("#out").onclick = () => showStudentLogin();
+  $("#snd").onclick = () => { LS.set("st_sound", !soundOn()); $("#snd").textContent = soundOn() ? "🔊" : "🔈"; if (soundOn()) SFX.thump(); };
+
+  const showDone = () => { if (done) $("#donebox").innerHTML = `<div class="done"><h3>스탬프 투어를 완성한 당신!</h3>고등학교를 향한 그 발걸음 성공적! 사제동행 가요제 날 시상합니다.</div>`; };
+  if (!newIds.length) { showDone(); return; }
+
+  $("#newmsg").textContent = newIds.length === 1 ? "새 스탬프가 도착했어요!" : `새 스탬프 ${newIds.length}개가 도착했어요!`;
+  newIds.forEach((_, i) => {
+    setTimeout(() => SFX.whoosh(), (BASE + GAP * i) * 1000);
+    setTimeout(() => {
+      SFX.thump();
+      if (navigator.vibrate) { try { navigator.vibrate(40); } catch {} }
+      const b = $("#board"); if (!b) return;
+      b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
+      const c = $("#cnt"); if (c) { c.textContent = prevCount + i + 1; c.classList.remove("bump"); void c.offsetWidth; c.classList.add("bump"); }
+      const f = $("#barfill"); if (f) f.style.width = pct(prevCount + i + 1) + "%";
+      const fm = $("#finishMeta"); if (fm) fm.textContent = total - (prevCount + i + 1) ? `${total - (prevCount + i + 1)}개 남았어요` : "완주 성공!";
+    }, (BASE + GAP * i + 0.42) * 1000);
+  });
+  setTimeout(() => {
+    showDone();
+    if (done) { confetti(); SFX.fanfare(); const ft = $("#finishTile"); if (ft) ft.classList.add("goal"); }
+  }, (BASE + GAP * newIds.length + 0.4) * 1000);
 }
 
-/* ---------- 교사 ---------- */
-let T = { tab: "status", cls: "all", q: "", students: [], pins: {} };
+/* ================= 교사 ================= */
+let T = { tab: "status", cls: "all", q: "", onlyNot: false, qs: null, qcls: null, students: [], pins: {} };
+let LAST = null;   // 되돌리기용 마지막 작업
+const confirmOff = () => LS.get("st_confirmOff", true);
 
-function showTeacher() {
-  stop();
-  if (USER) teacherHome(); else teacherLogin();
-}
+function showTeacher() { stop(); if (USER) teacherHome(); else teacherLogin(); }
 function teacherLogin(msg = "") {
   stop();
   app.innerHTML = frame(`
@@ -363,7 +622,7 @@ function teacherLogin(msg = "") {
 
 function teacherHome() {
   stop();
-  app.innerHTML = `<div class="board"><div class="clip"></div>
+  app.innerHTML = `<div class="board" id="board"><div class="clip"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
       <h2 class="jua" style="margin:6px 0;color:var(--brown)">스탬프 투어 관리</h2>
       <div><button class="btn light sm" id="lo">로그아웃</button> <button class="btn light sm" id="sv">학생 화면</button></div>
@@ -371,105 +630,232 @@ function teacherHome() {
     ${DEMO ? `<div class="demo">체험 모드: 데이터는 이 브라우저에만 저장됩니다.</div>` : ""}
     <div class="tabs">
       <button class="tab" data-t="status">스탬프 현황</button>
+      <button class="tab" data-t="quick">빠른 찍기</button>
       <button class="tab" data-t="roster">명단 · PIN</button>
       <button class="tab" data-t="config">스탬프 항목</button>
+      <button class="tab" data-t="admin">기록 · 초기화</button>
     </div>
     <div id="tv"></div>
     <div class="footer">WOOSHIN MIDDLE SCHOOL</div></div>`;
   $("#lo").onclick = async () => { await DB.logout(); USER = null; showStudentLogin(); };
   $("#sv").onclick = () => showStudentLogin();
-  app.querySelectorAll(".tab").forEach(b => b.onclick = () => { T.tab = b.dataset.t; drawTeacher(); });
-  unsub = DB.watchAll((st, pins) => { T.students = st; T.pins = pins; drawTeacher(); });
+  app.querySelectorAll(".tab[data-t]").forEach(b => b.onclick = () => { T.tab = b.dataset.t; drawTeacher(); });
+  unsub = DB.watchAll((st, pins) => { T.students = st; T.pins = pins; drawTeacher(); refreshModal(); });
 }
 
 function drawTeacher() {
-  app.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.t === T.tab));
+  app.querySelectorAll(".tab[data-t]").forEach(b => b.classList.toggle("on", b.dataset.t === T.tab));
   const v = $("#tv"); if (!v) return;
-  if (T.tab === "status") drawStatus(v);
-  else if (T.tab === "roster") drawRoster(v);
-  else drawConfig(v);
+  ({ status: drawStatus, quick: drawQuick, roster: drawRoster, config: drawConfig, admin: drawAdmin })[T.tab](v);
 }
 
+const has = (s, sid) => !!(s.stamps && s.stamps[sid]);
+const cntOf = s => CFG.stamps.filter(x => has(s, x.id)).length;
+const byId = id => T.students.find(s => s.id === id);
+const classesOf = () => [...new Set(T.students.map(s => s.cls))].sort((a, b) => a - b);
+
+/* 스탬프 변경 공통: 되돌리기 지원 */
+async function changeStamps(list, msg) {
+  const real = list.filter(c => { const s = byId(c.id); return s && has(s, c.sid) !== c.on; })
+    .map(c => ({ ...c, prevAt: c.on ? null : byId(c.id).stamps[c.sid] }));
+  if (!real.length) return toast("바뀜 내용이 없어요");
+  try {
+    await DB.applyStamps(real.map(({ id, sid, on }) => ({ id, sid, on })));
+    SFX.tick(real[0].on);
+    LAST = real;
+    toast(msg || (real[0].on ? "스탬프를 찍었어요" : "스탬프를 지웠어요"), "되돌리기", undoLast);
+  } catch (e) { console.error(e); toast("저장 실패: 교사 로그인·보안 규칙을 확인하세요"); }
+}
+async function undoLast() {
+  if (!LAST) return;
+  const rev = LAST.map(c => ({ id: c.id, sid: c.sid, on: !c.on, at: c.on ? null : c.prevAt }));
+  LAST = null;
+  try { await DB.applyStamps(rev); toast("되돌렸어요"); } catch { toast("되돌리기 실패"); }
+}
+async function toggleOne(id, sid) {
+  const s = byId(id); if (!s) return;
+  const on = !has(s, sid);
+  if (!on && confirmOff()) {
+    const x = CFG.stamps.find(i => i.id === sid);
+    if (!confirm(`${s.cls}반 ${s.num}번 ${s.name}의 '${x ? x.name : sid}' 스탬프를 지울까요?`)) return;
+  }
+  await changeStamps([{ id, sid, on }]);
+}
+
+/* ---------- 탭1: 스탬프 현황 ---------- */
 function drawStatus(v) {
   const list = CFG.stamps;
-  const classes = [...new Set(T.students.map(s => s.cls))].sort((a, b) => a - b);
-  let rows = T.students.filter(s => (T.cls === "all" || s.cls == T.cls) && (!T.q || (s.name || "").includes(T.q)))
+  let rows = T.students.filter(s => (T.cls === "all" || s.cls == T.cls) && (!T.q || (s.name || "").includes(T.q)) && (!T.onlyNot || cntOf(s) < list.length))
     .sort((a, b) => a.cls - b.cls || a.num - b.num);
-  const cnt = s => list.filter(x => s.stamps && s.stamps[x.id]).length;
-  const n = rows.length, full = rows.filter(s => cnt(s) === list.length && list.length).length;
-  const avg = n ? (rows.reduce((a, s) => a + cnt(s), 0) / n).toFixed(1) : 0;
+  const n = rows.length, full = rows.filter(s => cntOf(s) === list.length && list.length).length;
+  const avg = n ? (rows.reduce((a, s) => a + cntOf(s), 0) / n).toFixed(1) : 0;
   const focusPos = document.activeElement && document.activeElement.id === "q" ? document.activeElement.selectionStart : null;
   v.innerHTML = `
     <div class="cards">
       <div class="card"><div class="k">학생 수</div><div class="v">${n}</div></div>
       <div class="card"><div class="k">완주 (${list.length}개)</div><div class="v">${full}</div></div>
       <div class="card"><div class="k">평균 스탬프</div><div class="v">${avg}</div></div>
+      <div class="card"><div class="k">완주율</div><div class="v">${n ? Math.round(full / n * 100) : 0}%</div></div>
     </div>
     <div class="toolbar">
       <button class="tab ${T.cls === "all" ? "on" : ""}" data-c="all">전체</button>
-      ${classes.map(c => `<button class="tab ${T.cls == c ? "on" : ""}" data-c="${c}">${c}반</button>`).join("")}
+      ${classesOf().map(c => `<button class="tab ${T.cls == c ? "on" : ""}" data-c="${c}">${c}반</button>`).join("")}
+      <label class="chk"><input type="checkbox" id="onlyNot" ${T.onlyNot ? "checked" : ""}> 미완주만</label>
       <input id="q" placeholder="이름 검색" value="${esc(T.q)}" style="margin-left:auto">
       <button class="btn light sm" id="csv">CSV 저장</button>
     </div>
+    <p class="help" style="margin:0 0 8px">동그라미를 누르면 찍기/지우기, <b>이름</b>을 누르면 학생별 상세 관리 창이 열립니다. 잘못 눌렀다면 아래 알림의 <b>되돌리기</b>를 누르세요.</p>
     ${n ? `<div class="tblwrap"><table><thead><tr><th>반</th><th>번호</th><th>이름</th>
-      ${list.map(x => `<th>${esc(x.name)}<small>${esc(x.date || "")}</small>${T.cls !== "all" ? `<button class="colbtn" data-all="${x.id}">반 전체 ✔</button>` : ""}</th>`).join("")}
+      ${list.map(x => { const c = rows.filter(s => has(s, x.id)).length; return `<th>${esc(x.name)}<small>${esc(x.date || "")} · ${c}/${n}</small>
+        <div class="colbtns"><button class="colbtn" data-all="${x.id}" title="보이는 학생 모두 찍기">전체 ✔</button><button class="colbtn x" data-none="${x.id}" title="보이는 학생 모두 지우기">전체 ✕</button></div></th>`; }).join("")}
       <th>개수</th></tr></thead><tbody>
-      ${rows.map(s => `<tr><td>${s.cls}</td><td>${s.num}</td><td class="nm">${esc(s.name)}</td>
-        ${list.map(x => { const on = s.stamps && s.stamps[x.id]; return `<td><button class="cell ${on ? "on" : ""}" data-id="${s.id}" data-s="${x.id}" title="${on ? fmtTime(on) + " 획득 · 클릭하면 취소" : "클릭하면 스탬프"}">✔</button></td>`; }).join("")}
-        <td><span class="pill ${cnt(s) === list.length ? "full" : ""}">${cnt(s)}</span></td></tr>`).join("")}
-      </tbody></table></div>` : `<p class="help">아직 학생 명단이 없습니다. <b>명단 · PIN</b> 탭에서 명단을 붙여넣어 주세요.</p>`}`;
+      ${rows.map(s => `<tr><td>${s.cls}</td><td>${s.num}</td><td class="nm"><button class="namebtn" data-open="${s.id}">${esc(s.name)}</button></td>
+        ${list.map(x => { const on = s.stamps && s.stamps[x.id]; return `<td><button class="cell ${on ? "on" : ""}" data-id="${s.id}" data-s="${x.id}" title="${on ? fmtFull(on) + " 획득 · 누르면 지우기" : "누르면 찍기"}">✔</button></td>`; }).join("")}
+        <td><span class="pill ${cntOf(s) === list.length ? "full" : ""}">${cntOf(s)}</span></td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="help">표시할 학생이 없습니다. 명단이 없다면 <b>명단 · PIN</b> 탭에서 붙여넣어 주세요.</p>`}`;
   v.querySelectorAll("[data-c]").forEach(b => b.onclick = () => { T.cls = b.dataset.c; drawStatus(v); });
+  $("#onlyNot").onchange = e => { T.onlyNot = e.target.checked; drawStatus(v); };
   const q = $("#q"); q.oninput = () => { T.q = q.value.trim(); drawStatus(v); };
   if (focusPos !== null) { const nq = $("#q"); nq.focus(); nq.setSelectionRange(focusPos, focusPos); }
-  v.querySelectorAll(".cell").forEach(b => b.onclick = async () => {
-    const on = !b.classList.contains("on"); b.classList.toggle("on", on);
-    try { await DB.setStamp([b.dataset.id], b.dataset.s, on); } catch (e) { toast("저장 실패: 권한을 확인하세요"); }
+  v.querySelectorAll(".cell").forEach(b => b.onclick = () => toggleOne(b.dataset.id, b.dataset.s));
+  v.querySelectorAll("[data-open]").forEach(b => b.onclick = () => openStudent(b.dataset.open));
+  const scope = () => T.cls === "all" ? "보이는 전체 학생" : `${T.cls}반 (보이는 학생)`;
+  v.querySelectorAll("[data-all]").forEach(b => b.onclick = () => {
+    const x = list.find(i => i.id === b.dataset.all); const targets = rows.filter(s => !has(s, x.id));
+    if (!targets.length) return toast("이미 모두 찍혀 있어요");
+    if (!confirm(`${scope()} ${targets.length}명에게 '${x.name}' 스탬프를 찍을까요?`)) return;
+    changeStamps(targets.map(s => ({ id: s.id, sid: x.id, on: true })), `${targets.length}명에게 찍었어요`);
   });
-  v.querySelectorAll("[data-all]").forEach(b => b.onclick = async () => {
-    const x = list.find(i => i.id === b.dataset.all);
-    const ids = rows.filter(s => !(s.stamps && s.stamps[x.id])).map(s => s.id);
-    if (!ids.length) return toast("이미 모두 찍혀 있어요");
-    if (!confirm(`${T.cls}반 ${ids.length}명에게 '${x.name}' 스탬프를 찍을까요?`)) return;
-    await DB.setStamp(ids, x.id, true); toast("완료!");
+  v.querySelectorAll("[data-none]").forEach(b => b.onclick = () => {
+    const x = list.find(i => i.id === b.dataset.none); const targets = rows.filter(s => has(s, x.id));
+    if (!targets.length) return toast("지울 스탬프가 없어요");
+    if (!confirm(`${scope()} ${targets.length}명의 '${x.name}' 스탬프를 모두 지울까요?`)) return;
+    changeStamps(targets.map(s => ({ id: s.id, sid: x.id, on: false })), `${targets.length}명 스탬프를 지웠어요`);
   });
   $("#csv").onclick = () => {
     const head = ["반", "번호", "이름", ...list.map(x => x.name), "개수"];
-    const body = rows.map(s => [s.cls, s.num, s.name, ...list.map(x => s.stamps && s.stamps[x.id] ? "O" : ""), cnt(s)]);
-    download("스탬프현황.csv", [head, ...body]);
+    const body = rows.map(s => [s.cls, s.num, s.name, ...list.map(x => has(s, x.id) ? fmtDay(s.stamps[x.id]) : ""), cntOf(s)]);
+    download(`스탬프현황_${today()}.csv`, csvText([head, ...body]));
   };
 }
 
+/* ---------- 탭2: 빠른 찍기 (수업 중 태블릿·휴대폰용) ---------- */
+function parseNums(str) {
+  const out = new Set();
+  str.split(/[,\s]+/).filter(Boolean).forEach(t => {
+    const m = t.match(/^(\d+)-(\d+)$/);
+    if (m) { for (let i = +m[1]; i <= +m[2]; i++) out.add(i); } else if (/^\d+$/.test(t)) out.add(+t);
+  });
+  return [...out];
+}
+function drawQuick(v) {
+  const list = CFG.stamps, cls = classesOf();
+  if (!T.qs || !list.find(x => x.id === T.qs)) T.qs = list[0] && list[0].id;
+  if (T.qcls === null || !cls.includes(Number(T.qcls))) T.qcls = cls[0] ?? null;
+  const x = list.find(i => i.id === T.qs);
+  const rows = T.students.filter(s => s.cls == T.qcls).sort((a, b) => a.num - b.num);
+  const done = rows.filter(s => x && has(s, x.id)).length;
+  v.innerHTML = `
+    <div class="toolbar">
+      <select id="qs">${list.map(i => `<option value="${i.id}" ${i.id === T.qs ? "selected" : ""}>${esc(i.name)}</option>`).join("")}</select>
+      ${cls.map(c => `<button class="tab ${T.qcls == c ? "on" : ""}" data-qc="${c}">${c}반</button>`).join("")}
+      <span class="pill" style="margin-left:auto">${done} / ${rows.length}명 완료</span>
+    </div>
+    <div class="toolbar">
+      <input id="nums" placeholder="번호로 찍기 예: 1,3,5-12" style="flex:1;min-width:180px">
+      <button class="btn sm" id="numOn">찍기</button>
+      <button class="btn danger sm" id="numOff">지우기</button>
+    </div>
+    <p class="help" style="margin:0 0 8px">학생 칸을 누르면 바로 찍히고, 빨간 칸을 다시 누르면 지워집니다.</p>
+    ${rows.length ? `<div class="qgrid">${rows.map(s => `<button class="qbtn ${x && has(s, x.id) ? "on" : ""}" data-q="${s.id}"><b>${s.num}</b>${esc(s.name)}</button>`).join("")}</div>`
+      : `<p class="help">명단을 먼저 등록해 주세요.</p>`}`;
+  $("#qs").onchange = e => { T.qs = e.target.value; drawQuick(v); };
+  v.querySelectorAll("[data-qc]").forEach(b => b.onclick = () => { T.qcls = Number(b.dataset.qc); drawQuick(v); });
+  v.querySelectorAll("[data-q]").forEach(b => b.onclick = () => x && toggleOne(b.dataset.q, x.id));
+  const byNums = on => {
+    const nums = parseNums($("#nums").value); if (!nums.length || !x) return toast("번호를 입력하세요");
+    const targets = rows.filter(s => nums.includes(Number(s.num)));
+    if (!targets.length) return toast("해당 번호 학생이 없어요");
+    if (!on && !confirm(`${T.qcls}반 ${targets.map(s => s.num).join(", ")}번의 '${x.name}' 스탬프를 지울까요?`)) return;
+    changeStamps(targets.map(s => ({ id: s.id, sid: x.id, on })), `${targets.length}명 ${on ? "찍었어요" : "지웠어요"}`);
+    $("#nums").value = "";
+  };
+  $("#numOn").onclick = () => byNums(true);
+  $("#numOff").onclick = () => byNums(false);
+}
+
+/* ---------- 학생 상세 창 ---------- */
+let MODAL_ID = null;
+function openStudent(id) { MODAL_ID = id; refreshModal(); }
+function closeModal() { MODAL_ID = null; const m = $("#modal"); if (m) m.remove(); }
+function refreshModal() {
+  if (!MODAL_ID) return;
+  const s = byId(MODAL_ID);
+  let m = $("#modal");
+  if (!s) { closeModal(); return; }
+  const k = keyOf(s.cls, s.num), p = T.pins[k];
+  if (!m) { m = document.createElement("div"); m.className = "modal"; m.id = "modal"; document.body.appendChild(m); m.onclick = e => { if (e.target === m) closeModal(); }; }
+  m.innerHTML = `<div class="mbox">
+    <h3>${s.cls}반 ${s.num}번 ${esc(s.name)}</h3>
+    <p class="help" style="margin:0 0 8px">스탬프 ${cntOf(s)} / ${CFG.stamps.length} · PIN <b class="jua" style="font-size:16px;letter-spacing:2px">${p ? esc(p.pin) : "-"}</b></p>
+    ${CFG.stamps.map(x => `<div class="mrow"><span>${esc(x.name)} <small class="help">${has(s, x.id) ? fmtFull(s.stamps[x.id]) + " 획득" : ""}</small></span>
+      <button class="cell ${has(s, x.id) ? "on" : ""}" data-ms="${x.id}">✔</button></div>`).join("")}
+    <div class="toolbar" style="margin-top:12px">
+      <button class="btn sm" id="mAll">모두 찍기</button>
+      <button class="btn danger sm" id="mNone">모두 지우기</button>
+      <button class="btn light sm" id="mName">이름 수정</button>
+      <button class="btn light sm" id="mPin">PIN 재발급</button>
+      <button class="btn light sm" id="mClose" style="margin-left:auto">닫기</button>
+    </div></div>`;
+  m.querySelectorAll("[data-ms]").forEach(b => b.onclick = () => toggleOne(s.id, b.dataset.ms));
+  $("#mAll").onclick = () => changeStamps(CFG.stamps.map(x => ({ id: s.id, sid: x.id, on: true })), "모든 스탬프를 찍었어요");
+  $("#mNone").onclick = () => { if (confirm(`${s.name}의 스탬프를 모두 지울까요?`)) changeStamps(CFG.stamps.map(x => ({ id: s.id, sid: x.id, on: false })), "모든 스탬프를 지웠어요"); };
+  $("#mName").onclick = async () => { const nm = prompt("새 이름", s.name); if (nm && nm.trim()) { await DB.updateName(k, nm.trim()); toast("이름을 바꿨어요"); } };
+  $("#mPin").onclick = async () => {
+    if (!confirm("새 PIN을 발급할까요? 스탬프는 유지됩니다.")) return;
+    await DB.resetPin(k); closeModal(); toast("재발급 완료 · 명단 · PIN 탭에서 확인하세요");
+  };
+  $("#mClose").onclick = closeModal;
+}
+
+/* ---------- 탭3: 명단 · PIN ---------- */
 function drawRoster(v) {
   const pins = Object.entries(T.pins).map(([k, p]) => ({ k, ...p })).sort((a, b) => a.cls - b.cls || a.num - b.num);
   v.innerHTML = `
-    <h3 class="jua" style="color:var(--brown);margin:4px 0">① 명단 붙여넣기</h3>
-    <p class="help">엑셀에서 <b>반 · 번호 · 이름</b> 세 열을 복사해 붙여넣거나, 한 줄에 <code>1,3,홍길동</code>처럼 입력하세요.<br>
-      처음 넣는 학생은 4자리 PIN이 자동으로 만들어지고, 이미 있는 학생은 PIN과 스탬프가 그대로 유지됩니다(이름만 갱신).</p>
-    <textarea id="ta" placeholder="1	1	김가람&#10;1	2	이나래&#10;2	1	박다온"></textarea>
-    <div class="toolbar" style="margin-top:8px"><button class="btn coral" id="imp">명단 등록</button><span class="help" id="imsg"></span></div>
-    <h3 class="jua" style="color:var(--brown);margin:22px 0 4px">② 학생 PIN 목록 (${pins.length}명)</h3>
-    <div class="toolbar">
-      <button class="btn sm" id="pr">PIN 쪽지 인쇄</button>
-      <button class="btn light sm" id="pcsv">PIN CSV 저장</button>
-      <span class="help">쪽지를 잘라서 학생에게 나눠 주세요. PIN은 교사만 볼 수 있습니다.</span>
+    <div class="sec">
+      <h3 class="jua">① 명단 붙여넣기</h3>
+      <p class="help">엑셀에서 <b>반 · 번호 · 이름</b> 세 열을 복사해 붙여넣거나, 한 줄에 <code>1,3,홍길동</code>처럼 입력하세요.<br>
+        처음 넣는 학생은 4자리 PIN이 자동으로 만들어지고, 이미 있는 학생은 PIN과 스탬프가 그대로 유지됩니다(이름만 갱신). 전학생 한 명만 추가할 때도 한 줄만 넣으면 됩니다.</p>
+      <textarea id="ta" placeholder="1	1	김가람&#10;1	2	이나래&#10;2	1	박다온"></textarea>
+      <div class="toolbar" style="margin-top:8px"><button class="btn coral" id="imp">명단 등록</button><span class="help" id="imsg"></span></div>
     </div>
-    ${pins.length ? `<div class="tblwrap"><table><thead><tr><th>반</th><th>번호</th><th>이름</th><th>PIN</th><th>관리</th></tr></thead><tbody>
-      ${pins.map(p => `<tr><td>${p.cls}</td><td>${p.num}</td><td class="nm">${esc(p.name)}</td><td class="jua" style="font-size:17px;letter-spacing:2px">${esc(p.pin)}</td>
-        <td><button class="btn light sm" data-rp="${p.k}">PIN 재발급</button> <button class="btn light sm" data-rm="${p.k}">삭제</button></td></tr>`).join("")}
-      </tbody></table></div>` : ""}`;
+    <div class="sec">
+      <h3 class="jua">② 학생 PIN 목록 (${pins.length}명)</h3>
+      <div class="toolbar">
+        <button class="btn sm" id="pr">PIN 쪽지 인쇄</button>
+        <button class="btn light sm" id="pcsv">PIN CSV 저장</button>
+        <span class="help">쪽지를 잘라 학생에게 나눠 주세요. PIN은 교사만 볼 수 있습니다.</span>
+      </div>
+      ${pins.length ? `<div class="tblwrap"><table><thead><tr><th>반</th><th>번호</th><th>이름</th><th>PIN</th><th>관리</th></tr></thead><tbody>
+        ${pins.map(p => `<tr><td>${p.cls}</td><td>${p.num}</td><td class="nm">${esc(p.name)}</td><td class="jua" style="font-size:17px;letter-spacing:2px">${esc(p.pin)}</td>
+          <td><button class="btn light sm" data-nm="${p.k}">이름</button> <button class="btn light sm" data-rp="${p.k}">PIN 재발급</button> <button class="btn danger sm" data-rm="${p.k}">삭제</button></td></tr>`).join("")}
+        </tbody></table></div>` : `<p class="help">아직 등록된 학생이 없습니다.</p>`}
+    </div>`;
   $("#imp").onclick = async () => {
     const rows = $("#ta").value.split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => l.split(/\t|,/).map(x => x.trim()))
       .filter(a => a.length >= 3 && /^\d+$/.test(a[0]) && /^\d+$/.test(a[1]) && a[2]).map(a => ({ cls: Number(a[0]), num: Number(a[1]), name: a[2] }));
     if (!rows.length) return ($("#imsg").textContent = "형식을 확인하세요: 반, 번호, 이름");
     $("#imp").disabled = true; $("#imsg").textContent = "등록 중…";
-    try { await DB.upsertRoster(rows); $("#ta").value = ""; toast(`${rows.length}명 등록 완료`); }
-    catch (e) { $("#imsg").textContent = "등록 실패: 교사 로그인·보안 규칙을 확인하세요."; }
+    try { await DB.upsertRoster(rows); $("#ta").value = ""; $("#imsg").textContent = ""; toast(`${rows.length}명 등록 완료`); }
+    catch (e) { console.error(e); $("#imsg").textContent = "등록 실패: 교사 로그인·보안 규칙을 확인하세요."; }
     $("#imp").disabled = false;
   };
+  v.querySelectorAll("[data-nm]").forEach(b => b.onclick = async () => { const p = T.pins[b.dataset.nm]; const nm = prompt("새 이름", p.name); if (nm && nm.trim()) { await DB.updateName(b.dataset.nm, nm.trim()); toast("이름을 바꿨어요"); } });
   v.querySelectorAll("[data-rp]").forEach(b => b.onclick = async () => { if (confirm("새 PIN을 발급할까요? 스탬프는 유지됩니다.")) { await DB.resetPin(b.dataset.rp); toast("재발급 완료"); } });
-  v.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => { if (confirm("이 학생과 스탬프 기록을 삭제할까요?")) { await DB.removeStudent(b.dataset.rm); toast("삭제했습니다"); } });
-  $("#pcsv").onclick = () => download("학생PIN.csv", [["반", "번호", "이름", "PIN"], ...pins.map(p => [p.cls, p.num, p.name, p.pin])]);
+  v.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => { if (confirm("이 학생과 스탬프 기록을 삭제할까요? (되돌릴 수 없음)")) { await DB.removeStudent(b.dataset.rm); toast("삭제했습니다"); } });
+  $("#pcsv").onclick = () => download(`학생PIN_${today()}.csv`, csvText([["반", "번호", "이름", "PIN"], ...pins.map(p => [p.cls, p.num, p.name, p.pin])]));
   $("#pr").onclick = () => {
+    if (!pins.length) return toast("등록된 학생이 없어요");
     const url = location.href.split("#")[0];
     $("#slips").innerHTML = pins.map(p => `<div class="slip"><div>STAMP TOUR · ${esc(CFG.title || APP_TITLE)}</div>
       <b>3학년 ${p.cls}반 ${p.num}번 ${esc(p.name)}</b><div class="pin">PIN ${esc(p.pin)}</div><div style="font-size:11px;word-break:break-all">${esc(url)}</div></div>`).join("");
@@ -477,27 +863,34 @@ function drawRoster(v) {
   };
 }
 
+/* ---------- 탭4: 스탬프 항목 ---------- */
 function drawConfig(v) {
   let items = CFG.stamps.map(x => ({ ...x }));
   const paint = () => {
     v.innerHTML = `
-      <p class="help">학생 화면에 보이는 스탬프 칸입니다. 이름·시기·설명을 고치고 <b>저장</b>을 누르세요. 항목을 지우면 그 항목의 스탬프는 화면에서 사라집니다.</p>
+      <p class="help">학생 화면에 보이는 스탬프 칸입니다. 이름·시기·설명을 고치고 <b>저장</b>을 누르세요. ▲▼로 순서를 바꿀 수 있습니다.<br>
+        항목을 지우면 그 항목의 스탬프는 화면에서만 사라지고, 같은 항목을 다시 만들지 않는 한 복구되지 않습니다.</p>
       <div class="field"><label>화면 제목</label><input id="tt" value="${esc(CFG.title || APP_TITLE)}"></div>
       <div class="cfgrow help"><span>#</span><span>스탬프 이름</span><span class="d">시기</span><span class="ds">설명</span><span></span></div>
-      ${items.map((x, i) => `<div class="cfgrow"><span class="jua">${i + 1}</span>
+      ${items.map((x, i) => `<div class="cfgrow"><span class="jua" style="display:flex;flex-direction:column;align-items:center;line-height:1">
+          <button class="linkbtn" data-up="${i}" style="text-decoration:none">▲</button>${i + 1}<button class="linkbtn" data-dn="${i}" style="text-decoration:none">▼</button></span>
         <input data-i="${i}" data-f="name" value="${esc(x.name)}"><input class="d" data-i="${i}" data-f="date" value="${esc(x.date || "")}">
-        <input class="ds" data-i="${i}" data-f="desc" value="${esc(x.desc || "")}"><button class="btn light sm" data-del="${i}">✕</button></div>`).join("")}
+        <input class="ds" data-i="${i}" data-f="desc" value="${esc(x.desc || "")}"><button class="btn danger sm" data-del="${i}">✕</button></div>`).join("")}
       <div class="toolbar" style="margin-top:10px">
         <button class="btn light sm" id="add">+ 항목 추가</button>
+        <button class="btn light sm" id="def">기본값으로</button>
         <button class="btn coral" id="save" style="margin-left:auto">저장</button>
       </div>`;
     v.querySelectorAll("input[data-i]").forEach(inp => inp.oninput = () => { items[inp.dataset.i][inp.dataset.f] = inp.value; });
-    v.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { items.splice(Number(b.dataset.del), 1); paint(); });
+    v.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { if (confirm(`'${items[b.dataset.del].name}' 항목을 삭제할까요? (저장해야 반영)`)) { items.splice(Number(b.dataset.del), 1); paint(); } });
+    v.querySelectorAll("[data-up]").forEach(b => b.onclick = () => { const i = +b.dataset.up; if (i > 0) { [items[i - 1], items[i]] = [items[i], items[i - 1]]; paint(); } });
+    v.querySelectorAll("[data-dn]").forEach(b => b.onclick = () => { const i = +b.dataset.dn; if (i < items.length - 1) { [items[i + 1], items[i]] = [items[i], items[i + 1]]; paint(); } });
     $("#add").onclick = () => {
       if (items.length >= 12) return toast("최대 12개까지 가능해요");
       let n = 1; while (items.some(x => x.id === "s" + n) || CFG.stamps.some(x => x.id === "s" + n)) n++;
       items.push({ id: "s" + n, name: "새 활동", date: "", desc: "" }); paint();
     };
+    $("#def").onclick = () => { if (confirm("기본 8개 항목으로 되돌릴까요? (저장해야 반영)")) { items = DEFAULT_STAMPS.map(x => ({ ...x })); paint(); } };
     $("#save").onclick = async () => {
       const cfg = { title: $("#tt").value.trim() || APP_TITLE, stamps: items.filter(x => x.name.trim()) };
       try { await DB.saveConfig(cfg); CFG = cfg; toast("저장했습니다"); } catch (e) { toast("저장 실패: 권한을 확인하세요"); }
@@ -506,9 +899,95 @@ function drawConfig(v) {
   paint();
 }
 
-function download(name, rows) {
-  const csv = "﻿" + rows.map(r => r.map(c => `"${String(c ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = name; a.click();
+/* ---------- 탭5: 기록 · 초기화 ---------- */
+function backupObj() {
+  return {
+    app: "stamp-tour", version: 1, exportedAt: new Date().toISOString(), config: CFG,
+    students: T.students.map(s => ({ id: s.id, cls: s.cls, num: s.num, name: s.name,
+      stamps: Object.fromEntries(Object.entries(s.stamps || {}).map(([k, val]) => [k, toMs(val)])) })),
+    pins: T.pins
+  };
+}
+const saveBackup = tag => download(`스탬프투어_백업_${tag || ""}${today()}.json`, JSON.stringify(backupObj(), null, 1), "application/json");
+const typed = word => prompt(`정말 진행하려면 '${word}'라고 입력하세요.`) === word;
+
+function drawAdmin(v) {
+  const name = id => CFG.stamps.find(x => x.id === id)?.name || id;
+  const events = [];
+  T.students.forEach(s => Object.entries(s.stamps || {}).forEach(([sid, at]) => events.push({ s, sid, at: toMs(at) })));
+  events.sort((a, b) => b.at - a.at);
+  const cls = classesOf();
+  v.innerHTML = `
+    <div class="sec">
+      <h3 class="jua">최근 스탬프 기록</h3>
+      ${events.length ? `<ul class="log">${events.slice(0, 40).map(e => `<li><time>${fmtFull(e.at)}</time>${e.s.cls}반 ${e.s.num}번 ${esc(e.s.name)} · <b>${esc(name(e.sid))}</b>
+        <button class="linkbtn" data-ux="${e.s.id}|${e.sid}">지우기</button></li>`).join("")}</ul>` : `<p class="help">아직 찍힌 스탬프가 없습니다.</p>`}
+    </div>
+    <div class="sec">
+      <h3 class="jua">설정</h3>
+      <label class="chk"><input type="checkbox" id="cOff" ${confirmOff() ? "checked" : ""}> 스탬프를 지울 때마다 확인 창 띄우기</label>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" id="sOn" ${soundOn() ? "checked" : ""}> 효과음 켜기 (이 기기)</label>
+      <p class="help" style="margin:6px 0 0">모든 찍기·지우기 직후 화면 아래 알림에서 <b>되돌리기</b>를 6초 동안 누를 수 있습니다.</p>
+    </div>
+    <div class="sec">
+      <h3 class="jua">백업 · 복원</h3>
+      <p class="help">명단, PIN, 스탬프, 항목 설정을 파일 하나로 저장합니다. 초기화 전에는 자동으로 백업 파일이 내려받아집니다.</p>
+      <div class="toolbar"><button class="btn sm" id="bk">백업 파일 저장</button>
+        <label class="btn light sm" style="cursor:pointer">백업에서 복원<input type="file" id="rs" accept=".json,application/json" hidden></label></div>
+    </div>
+    <div class="sec red">
+      <h3 class="jua" style="color:#a3281d">초기화 (되돌릴 수 없음)</h3>
+      <div class="toolbar">
+        <select id="rCls"><option value="">반 선택</option>${cls.map(c => `<option value="${c}">${c}반</option>`).join("")}</select>
+        <button class="btn danger sm" id="rClass">이 반 스탬프만 초기화</button>
+      </div>
+      <div class="toolbar">
+        <select id="rItem"><option value="">항목 선택</option>${CFG.stamps.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join("")}</select>
+        <button class="btn danger sm" id="rItemBtn">이 항목 스탬프만 전체 초기화</button>
+      </div>
+      <div class="toolbar">
+        <button class="btn danger sm" id="rAllStamps">전체 스탬프 초기화 (명단·PIN 유지)</button>
+        <button class="btn danger sm" id="rEverything">명단·PIN·스탬프 전부 삭제</button>
+      </div>
+      <p class="help" style="margin:4px 0 0">초기화 버튼을 누르면 확인 단어를 입력해야 하고, 실행 직전에 백업 파일이 자동 저장됩니다.</p>
+    </div>`;
+  v.querySelectorAll("[data-ux]").forEach(b => b.onclick = () => { const [id, sid] = b.dataset.ux.split("|"); toggleOne(id, sid); });
+  $("#cOff").onchange = e => LS.set("st_confirmOff", e.target.checked);
+  $("#sOn").onchange = e => { LS.set("st_sound", e.target.checked); if (e.target.checked) SFX.tick(true); };
+  $("#bk").onclick = () => saveBackup();
+  $("#rs").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const b = JSON.parse(await f.text());
+      if (b.app !== "stamp-tour") throw new Error("형식");
+      if (!confirm(`${b.exportedAt ? b.exportedAt.slice(0, 16).replace("T", " ") : ""} 백업(${(b.students || []).length}명)으로 복원할까요?\n같은 학생의 현재 기록은 백업 내용으로 덮어씁니다.`)) return;
+      await DB.restore(b); if (b.config) CFG = b.config; toast("복원 완료"); drawTeacher();
+    } catch (er) { console.error(er); toast("복원 실패: 올바른 백업 파일인지 확인하세요"); }
+    e.target.value = "";
+  };
+  const run = async (fn, okMsg) => { try { await fn(); toast(okMsg); } catch (e) { console.error(e); toast("실패: 교사 로그인·보안 규칙을 확인하세요"); } };
+  $("#rClass").onclick = () => {
+    const c = $("#rCls").value; if (!c) return toast("반을 선택하세요");
+    const ids = T.students.filter(s => s.cls == c).map(s => s.id);
+    if (!confirm(`${c}반 ${ids.length}명의 스탬프를 모두 지울까요?`) || !typed("초기화")) return;
+    saveBackup(`${c}반초기화전_`); run(() => DB.clearStamps(ids), `${c}반 스탬프를 초기화했어요`);
+  };
+  $("#rItemBtn").onclick = () => {
+    const sid = $("#rItem").value; if (!sid) return toast("항목을 선택하세요");
+    const ids = T.students.filter(s => has(s, sid)).map(s => s.id);
+    if (!ids.length) return toast("이 항목은 찍힌 학생이 없어요");
+    if (!confirm(`'${name(sid)}' 스탬프를 ${ids.length}명에게서 모두 지울까요?`) || !typed("초기화")) return;
+    saveBackup("항목초기화전_"); run(() => DB.clearStamps(ids, sid), "항목 스탬프를 초기화했어요");
+  };
+  $("#rAllStamps").onclick = () => {
+    const ids = T.students.map(s => s.id); if (!ids.length) return toast("학생이 없어요");
+    if (!confirm(`전체 ${ids.length}명의 스탬프를 모두 지울까요? 명단과 PIN은 남습니다.`) || !typed("전체초기화")) return;
+    saveBackup("전체초기화전_"); run(() => DB.clearStamps(ids), "전체 스탬프를 초기화했어요");
+  };
+  $("#rEverything").onclick = () => {
+    if (!confirm("명단, PIN, 스탬프 기록을 모두 삭제할까요? 학생들이 가진 PIN도 쓸 수 없게 됩니다.") || !typed("전부삭제")) return;
+    saveBackup("전부삭제전_"); run(() => DB.deleteAll(), "모든 학생 데이터를 삭제했어요");
+  };
 }
 
 /* ---------------- 시작 ---------------- */
@@ -520,7 +999,7 @@ function download(name, rows) {
     await new Promise(res => { let done = false; DB.onAuth(u => { USER = u; if (!done) { done = true; res(); } }); setTimeout(() => { if (!done) { done = true; res(); } }, 2500); });
   } catch (e) {
     console.error(e);
-    app.innerHTML = frame(`<p class="err">연결에 실패했습니다. Firebase 설정값을 확인하세요.</p>`);
+    app.innerHTML = frame(`<p class="err">연결에 실패했습니다. 인터넷 연결이나 Firebase 설정값을 확인하세요.</p>`);
     return;
   }
   location.hash === "#teacher" ? showTeacher() : showStudentLogin();
