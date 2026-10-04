@@ -25,7 +25,7 @@
   h1,h2,h3,.jua{font-family:'Jua',sans-serif;font-weight:400}
   button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   input,select,textarea{font-family:inherit;font-size:16px}
-  .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 48px}
+  .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 20px}
   .board{
     background:var(--paper); border-radius:22px; padding:28px 22px 26px; position:relative;
     box-shadow:0 0 0 10px #efe0c8, 0 12px 30px rgba(74,44,33,.18); margin-top:34px;
@@ -157,15 +157,17 @@
   .toast.show{opacity:1;pointer-events:auto}
   .toast button{background:var(--gold);color:var(--brown);border:none;border-radius:8px;padding:5px 10px;font-size:14px}
   .slips{display:none}
+  .credit{text-align:center;color:var(--muted);font-size:12.5px;margin:0;padding:0 16px calc(22px + env(safe-area-inset-bottom));letter-spacing:.3px}
+  .credit b{font-family:'Jua';font-weight:400;color:var(--brown2);font-size:14px}
   /* ===== 태블릿 ===== */
   @media (max-width:820px){
-    .wrap{padding:20px 12px 40px}
+    .wrap{padding:20px 12px 18px}
     .board{padding:24px 16px 22px}
     .cards{grid-template-columns:repeat(2,1fr)}
   }
   /* ===== 휴대폰 (학생 대부분) ===== */
   @media (max-width:560px){
-    .wrap{padding:14px 10px calc(28px + env(safe-area-inset-bottom))}
+    .wrap{padding:14px 10px 16px}
     .board{padding:24px 12px 18px;border-radius:18px;box-shadow:0 0 0 6px #efe0c8,0 8px 20px rgba(74,44,33,.16);margin-top:30px}
     .clip{width:130px;height:38px;top:-24px} .clip:after{width:84px;height:28px;border-width:6px;top:12px}
     .sub{font-size:14px} .title{font-size:25px}
@@ -196,7 +198,7 @@
     .stamp.new .ring,.stamp.new .ring:after,.stamp.new .bang,.board.shake{animation:none!important}
   }
   @media print{
-    body{background:#fff} .wrap,.toast,.modal{display:none!important}
+    body{background:#fff} .wrap,.toast,.modal,.credit{display:none!important}
     .slips{display:grid!important;grid-template-columns:repeat(3,1fr);gap:0}
     .slip{border:1px dashed #999;padding:12px 10px;height:46mm;font-size:13px;page-break-inside:avoid}
     .slip b{font-size:16px} .slip .pin{font-size:26px;letter-spacing:4px;font-weight:bold;margin:6px 0}
@@ -205,6 +207,7 @@
 </head>
 <body>
 <div class="wrap" id="app"></div>
+<footer class="credit">ⓒ 2026 우신중학교 3학년부 · <b>이진영쌔</b> 제작</footer>
 <div class="slips" id="slips"></div>
 <div class="toast" id="toast"></div>
 
@@ -658,7 +661,7 @@ const classesOf = () => [...new Set(T.students.map(s => s.cls))].sort((a, b) => 
 async function changeStamps(list, msg) {
   const real = list.filter(c => { const s = byId(c.id); return s && has(s, c.sid) !== c.on; })
     .map(c => ({ ...c, prevAt: c.on ? null : byId(c.id).stamps[c.sid] }));
-  if (!real.length) return toast("바뀜 내용이 없어요");
+  if (!real.length) return toast("바뀐 내용이 없어요");
   try {
     await DB.applyStamps(real.map(({ id, sid, on }) => ({ id, sid, on })));
     SFX.tick(real[0].on);
