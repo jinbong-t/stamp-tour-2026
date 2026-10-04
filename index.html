@@ -158,7 +158,7 @@
   .toast button{background:var(--gold);color:var(--brown);border:none;border-radius:8px;padding:5px 10px;font-size:14px}
   .slips{display:none}
   .credit{text-align:center;color:var(--muted);font-size:12.5px;margin:0;padding:0 16px calc(22px + env(safe-area-inset-bottom));letter-spacing:.3px}
-  .credit b{font-family:'Jua';font-weight:400;color:var(--brown2);font-size:14px}
+  .credit b{font-weight:800;color:var(--brown2);font-size:13px;letter-spacing:1.2px}
   /* ===== 태블릿 ===== */
   @media (max-width:820px){
     .wrap{padding:20px 12px 18px}
@@ -207,7 +207,7 @@
 </head>
 <body>
 <div class="wrap" id="app"></div>
-<footer class="credit">ⓒ 2026 우신중학교 3학년부 · <b>이진영쌤</b> 제작</footer>
+<footer class="credit">Made by <b>LEE JIN YOUNG</b></footer>
 <div class="slips" id="slips"></div>
 <div class="toast" id="toast"></div>
 
@@ -351,9 +351,9 @@ function makeDemoDB() {
     async getConfig() { return G("config") || { stamps: DEFAULT_STAMPS }; },
     async saveConfig(c) { S("config", c); fire(); },
     watchStudent(h, cb) { const f = () => cb(G("students")[h] || null); f(); subs.add(f); return () => subs.delete(f); },
-    async login(_e, pw) { if (pw !== DEMO_TEACHER_PW) throw new Error("비밀번호가 다릅니다 (체험 모드: 1234)"); LS.set("st_auth", true); },
-    async logout() { LS.set("st_auth", false); },
-    onAuth(cb) { cb(LS.get("st_auth", false) ? { email: "demo" } : null); },
+    async login(_e, pw) { if (pw !== DEMO_TEACHER_PW) throw new Error("비밀번호가 다릅니다 (체험 모드: 1234)"); sessionStorage.setItem("st_auth","1"); },
+    async logout() { sessionStorage.removeItem("st_auth"); },
+    onAuth(cb) { cb(sessionStorage.getItem("st_auth") ? { email: "demo" } : null); },
     watchAll(cb) { const f = () => cb(Object.entries(G("students")).map(([id, s]) => ({ id, ...s })), G("pins")); f(); subs.add(f); return () => subs.delete(f); },
     async applyStamps(list) {
       const st = G("students");
@@ -407,6 +407,9 @@ async function makeFirebaseDB() {
   const A = await import(base + "firebase-auth.js");
   const app = initializeApp(firebaseConfig);
   const db = F.getFirestore(app), auth = A.getAuth(app);
+  // 교사 로그인은 이 탭에서만 유지 (탭/브라우저를 닫으면 자동 로그아웃) — 이전에 저장된 로그인도 제거
+  try { await auth.authStateReady(); if (auth.currentUser && !sessionStorage.getItem("st_tsess")) await A.signOut(auth); } catch (e) {}
+  await A.setPersistence(auth, A.browserSessionPersistence);
   const sdoc = id => F.doc(db, "students", id), pdoc = k => F.doc(db, "pins", k);
   const EST = { serverTimestamps: "estimate" };
   async function runBatches(ops) {            // ops: (batch) => void
@@ -416,7 +419,7 @@ async function makeFirebaseDB() {
     async getConfig() { const s = await F.getDoc(F.doc(db, "config", "main")); return s.exists() ? s.data() : { stamps: DEFAULT_STAMPS }; },
     async saveConfig(c) { await F.setDoc(F.doc(db, "config", "main"), c); },
     watchStudent(h, cb) { return F.onSnapshot(sdoc(h), s => cb(s.exists() ? s.data(EST) : null), () => cb(null)); },
-    async login(e, pw) { await A.signInWithEmailAndPassword(auth, e, pw); },
+    async login(e, pw) { sessionStorage.setItem("st_tsess","1"); await A.signInWithEmailAndPassword(auth, e, pw); },
     async logout() { await A.signOut(auth); },
     onAuth(cb) { A.onAuthStateChanged(auth, u => cb(u)); },
     watchAll(cb) {
