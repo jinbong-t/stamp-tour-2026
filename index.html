@@ -20,7 +20,7 @@
     background:
       repeating-linear-gradient(0deg, rgba(244,163,64,.16) 0 24px, transparent 24px 48px),
       repeating-linear-gradient(90deg, rgba(244,163,64,.16) 0 24px, transparent 24px 48px), #fff3e2;
-    min-height:100vh; overflow-x:hidden;
+    min-height:100vh; overflow-x:hidden; word-break:keep-all; overflow-wrap:anywhere;
   }
   h1,h2,h3,.jua{font-family:'Jua',sans-serif;font-weight:400}
   button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -54,10 +54,11 @@
   .row{display:flex;gap:12px} .row>*{flex:1}
   .login{max-width:380px;margin:18px auto 0}
   .err{color:var(--red);font-size:14px;min-height:20px;text-align:center}
-  .demo{background:#fff1c9;border:1px dashed var(--gold);color:#7a5a12;border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:12px;text-align:center}
+  .demo{background:#fff1c9;border:1px dashed var(--gold);color:#7a5a12;border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:12px;text-align:justify;line-height:1.6}
 
   /* ===== 학생 스탬프판 ===== */
   .who{text-align:center;margin:6px 0 12px;font-size:18px}
+  .guide{text-align:justify;max-width:380px;margin:6px auto 12px;font-size:16px;line-height:1.6}
   .who b{font-family:'Jua';font-size:22px;color:var(--brown)}
   .count{text-align:center;font-family:'Jua';font-size:20px;color:var(--brown)}
   .count .big{font-size:44px;color:var(--coral);display:inline-block}
@@ -103,8 +104,8 @@
   @keyframes goal{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   .start .chev{animation:chev 1.1s ease-in-out infinite}
   @keyframes chev{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
-  .done{margin:24px auto 0;max-width:520px;background:var(--brown);color:#fff;border-radius:16px;padding:18px;text-align:center}
-  .done h3{margin:0 0 6px;font-size:26px;color:var(--gold)}
+  .done{margin:24px auto 0;max-width:520px;background:var(--brown);color:#fff;border-radius:16px;padding:18px;text-align:justify;line-height:1.6}
+  .done h3{text-align:center;margin:0 0 6px;font-size:26px;color:var(--gold)}
   .sndbtn{position:absolute;right:16px;top:14px;background:#f1e4d3;border:none;border-radius:10px;padding:6px 9px;font-size:16px}
   .confetti{position:fixed;inset:0;pointer-events:none;z-index:20;overflow:hidden}
   .confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;animation:fall linear forwards}
@@ -136,7 +137,7 @@
   .colbtn{font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--brown2)}
   .colbtn.x{color:#a3281d}
   textarea{width:100%;min-height:170px;border:2px solid var(--line);border-radius:12px;padding:10px;font-size:15px}
-  .help{font-size:13px;color:var(--muted);line-height:1.6}
+  .help{font-size:13px;color:var(--muted);line-height:1.6;text-align:justify}
   .sec{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px;background:#fff}
   .sec h3{margin:0 0 6px;color:var(--brown);font-size:19px}
   .sec.red{border-color:#f0c2bb;background:#fff7f5}
@@ -181,7 +182,7 @@
   .rk-cls small{color:var(--muted);text-align:right}
   .nd{text-align:center}
   .nd h3{margin:6px 0 0;font-size:22px}
-  .nd-msg{white-space:pre-line;font-size:17px;line-height:1.6;margin:10px 0 14px}
+  .nd-msg{text-align:justify;white-space:pre-line;font-size:17px;line-height:1.6;margin:10px 0 14px}
   .nd-prog{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;margin-bottom:14px;line-height:1.7}
   .nd-prog b{font-family:'Jua';color:var(--coral);font-size:17px}
   .btn.rkbtn{background:var(--gold);color:var(--brown)} .btn.rkbtn:hover{background:#ebab1d}
@@ -617,7 +618,7 @@ function showStudentLogin(msg = "") {
   stop();
   app.innerHTML = frame(`
     ${DEMO ? `<div class="demo">체험 모드입니다 · 교사용에서 명단을 넣으면 바로 시험해 볼 수 있어요 (교사 비밀번호 1234)</div>` : ""}
-    <p class="who">반, 번호, 개인 PIN을 입력하고 내 스탬프를 확인하세요!</p>
+    <p class="guide">반, 번호, 개인 PIN을 입력하고 내 스탬프를 확인하세요!</p>
     <form class="login" id="sf" autocomplete="off">
       <div class="row">
         <div class="field"><label>반</label><select id="cls">${[1,2,3,4,5,6,7,8,9,10].map(n => `<option value="${n}">${n}반</option>`).join("")}</select></div>
