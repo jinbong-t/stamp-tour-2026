@@ -156,6 +156,38 @@
     font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:40;display:flex;gap:12px;align-items:center}
   .toast.show{opacity:1;pointer-events:auto}
   .toast button{background:var(--gold);color:var(--brown);border:none;border-radius:8px;padding:5px 10px;font-size:14px}
+  /* ===== 랭킹 · 팝업 ===== */
+  .spop .mbox{max-width:440px;animation:popin .35s cubic-bezier(.3,1.4,.5,1) both}
+  @keyframes popin{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+  .rk-head{text-align:center;margin-bottom:10px}
+  .rk-head svg,.nd svg{width:60px;height:60px}
+  .rk-head h3{margin:4px 0 2px;font-size:24px}
+  .rk-head p{margin:0;font-size:12px;color:var(--muted)}
+  .rk-me{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center;font-size:14px;margin-bottom:6px}
+  .rk-me b{font-family:'Jua';font-size:20px;color:var(--coral)}
+  .rk-me .hint{display:block;font-family:'Jua';color:var(--brown);font-size:16px;margin-top:2px}
+  .spop h4{font-family:'Jua';font-weight:400;color:var(--brown);margin:14px 0 6px;font-size:17px}
+  .rk-list{list-style:none;margin:0;padding:0}
+  .rk-list li{display:flex;align-items:center;gap:10px;padding:7px 6px;border-bottom:1px dashed var(--line);font-size:15px}
+  .rk-list li.me,.rk-cls.me{background:#fff1d2;border-radius:10px}
+  .rk-no{width:28px;height:28px;border-radius:50%;background:#f1e4d3;color:var(--brown);display:flex;align-items:center;justify-content:center;font-family:'Jua';font-size:15px;flex:none}
+  .rk-no.g1{background:#f4ba2f;color:#fff} .rk-no.g2{background:#b3aaa1;color:#fff} .rk-no.g3{background:#cf8a4e;color:#fff}
+  .rk-nm{flex:1} .rk-nm em{font-style:normal;font-size:11px;background:var(--coral);color:#fff;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+  .rk-c{font-family:'Jua';color:var(--coral)}
+  .rk-cls{display:grid;grid-template-columns:28px 44px 1fr 76px;gap:8px;align-items:center;font-size:14px;padding:5px 6px}
+  .rk-cls .bar2{height:10px;background:#f1e4d3;border-radius:99px;overflow:hidden}
+  .rk-cls .bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--coral));border-radius:99px}
+  .rk-cls small{color:var(--muted);text-align:right}
+  .nd{text-align:center}
+  .nd h3{margin:6px 0 0;font-size:22px}
+  .nd-msg{white-space:pre-line;font-size:17px;line-height:1.6;margin:10px 0 14px}
+  .nd-prog{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;margin-bottom:14px;line-height:1.7}
+  .nd-prog b{font-family:'Jua';color:var(--coral);font-size:17px}
+  .btn.rkbtn{background:var(--gold);color:var(--brown)} .btn.rkbtn:hover{background:#ebab1d}
+  .nchips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .nchip{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:13px;background:#fff;cursor:pointer}
+  .nchip.off{opacity:.45}
+  td .rk-no{margin:0 auto}
   .slips{display:none}
   .credit{text-align:center;margin:6px auto 0;padding:10px 16px calc(22px + env(safe-area-inset-bottom));
     font-family:'Montserrat',system-ui,sans-serif;font-size:10.5px;font-weight:500;letter-spacing:1px;color:var(--muted)}
@@ -342,6 +374,7 @@ function confetti() {
    getConfig / saveConfig / watchStudent / login / logout / onAuth / watchAll
    applyStamps([{id,sid,on}]) / clearStamps(ids, sid?) / upsertRoster(rows) / updateName(k,name)
    removeStudent(k) / resetPin(k) / deleteAll() / restore(backup)
+   watchRank(cb) / saveRank(r) / setNudge(ids, nudge|null)   ← 랭킹 팝업 · 응원 팝업
 ------------------------------------------------ */
 let DB;
 function makeDemoDB() {
@@ -391,6 +424,13 @@ function makeDemoDB() {
       S("students", st); S("pins", pins); fire();
     },
     async deleteAll() { S("students", {}); S("pins", {}); fire(); },
+    watchRank(cb) { const f = () => cb(LS.get("st_rank", null)); f(); subs.add(f); return () => subs.delete(f); },
+    async saveRank(r) { LS.set("st_rank", r); fire(); },
+    async setNudge(ids, nudge) {
+      const st = G("students");
+      ids.forEach(id => { if (!st[id]) return; if (nudge) st[id].nudge = nudge; else delete st[id].nudge; });
+      S("students", st); fire();
+    },
     async restore(b) {
       const st = G("students"), pins = G("pins");
       (b.students || []).forEach(s => { const { id, ...rest } = s; st[id] = rest; });
@@ -463,6 +503,11 @@ async function makeFirebaseDB() {
       b.set(sdoc(id), old.exists() ? old.data() : { cls: p.cls, num: p.num, name: p.name, stamps: {} });
       b.delete(sdoc(p.id)); b.set(pdoc(k), { ...p, pin, id }); await b.commit();
     },
+    watchRank(cb) { return F.onSnapshot(F.doc(db, "config", "rank"), s => cb(s.exists() ? s.data() : null), () => cb(null)); },
+    async saveRank(r) { await F.setDoc(F.doc(db, "config", "rank"), r); },
+    async setNudge(ids, nudge) {
+      await runBatches(ids.map(id => b => b.update(sdoc(id), { nudge: nudge || F.deleteField() })));
+    },
     async deleteAll() {
       const [a, c] = await Promise.all([F.getDocs(F.collection(db, "students")), F.getDocs(F.collection(db, "pins"))]);
       await runBatches([...a.docs, ...c.docs].map(d => b => b.delete(d.ref)));
@@ -509,6 +554,63 @@ const FINISH_SVG = SIGN("FINISH", `<ellipse cx="62" cy="107" rx="20" ry="5.5" fi
   <rect x="57" y="74" width="10" height="19" rx="2" fill="#f4ba2f" stroke="#4a2c21" stroke-width="2.5"/>
   <circle cx="62" cy="68" r="8" fill="#e0973f" stroke="#4a2c21" stroke-width="2.5"/>`);
 const SEEN = new Map();   // 학생별로 화면에 이미 보여준 스탬프
+const TROPHY = `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h24v14a12 12 0 0 1-24 0z" fill="#f4ba2f" stroke="#4a2c21" stroke-width="2.5"/>
+  <path d="M20 14h-7a8 8 0 0 0 9 10M44 14h7a8 8 0 0 1-9 10" fill="none" stroke="#4a2c21" stroke-width="2.5"/>
+  <rect x="28" y="35" width="8" height="9" fill="#e0973f" stroke="#4a2c21" stroke-width="2.5"/><rect x="19" y="44" width="26" height="9" rx="2" fill="#6b4334" stroke="#4a2c21" stroke-width="2.5"/>
+  <path d="M27 19l3.5 3.5L37 16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M54 6v7M50.5 9.5h7M9 34v6M6 37h6" stroke="#e0573f" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+const CHEER = `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 54S10 40 10 25a11 11 0 0 1 22-3 11 11 0 0 1 22 3c0 15-22 29-22 29z" fill="#e0573f" stroke="#4a2c21" stroke-width="2.5"/>
+  <path d="M21 23a6 6 0 0 1 6-5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M53 6v8M49 10h8M9 44v6M6 47h6" stroke="#f4ba2f" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+
+/* 학생 화면 팝업 (응원 → 랭킹 순서, 각각 한 번씩) */
+let ST = { s: null, h: null, rank: null, timer: null, until: 0 };
+function closeSpop() { const m = $("#spop"); if (m) m.remove(); }
+function openSpop(html, after) {
+  closeSpop();
+  const m = document.createElement("div"); m.className = "modal spop"; m.id = "spop";
+  m.innerHTML = `<div class="mbox">${html}</div>`; document.body.appendChild(m);
+  const close = () => { m.remove(); if (after) after(); };
+  $("#spx", m).onclick = close; m.onclick = e => { if (e.target === m) close(); };
+  SFX.tick(true);
+}
+function schedulePop(ms) { clearTimeout(ST.timer); ST.until = Date.now() + ms; ST.timer = setTimeout(maybePopups, ms); }
+function maybePopups() {
+  const { s, h, rank } = ST; if (!s || !h || $("#spop")) return;
+  if (s.nudge && s.nudge.at && LS.get("st_nudge_" + h, 0) !== s.nudge.at) {
+    LS.set("st_nudge_" + h, s.nudge.at); return showNudge(s, () => schedulePop(350));
+  }
+  if (rank && rank.on && LS.get("st_rank_" + h, 0) !== rank.at) {
+    LS.set("st_rank_" + h, rank.at); showRankPop(rank, s, h);
+  }
+}
+function showNudge(s, after) {
+  const list = CFG.stamps, got = list.filter(x => s.stamps && s.stamps[x.id]).length, next = list.find(x => !(s.stamps && s.stamps[x.id]));
+  openSpop(`<div class="nd">${CHEER}<h3 class="jua">선생님의 응원 메시지</h3><p class="nd-msg">${esc(s.nudge.msg)}</p>
+    <div class="nd-prog">지금까지 <b>${got}</b> / ${list.length}개 모았어요${next ? `<br>다음 도전: <b>${esc(next.name)}</b>${next.date ? ` (${esc(next.date)})` : ""}` : ""}</div>
+    <button class="btn coral" id="spx" style="width:100%">힘내볼게요!</button></div>`, after);
+}
+function showRankPop(r, s, h) {
+  const total = r.total || CFG.stamps.length;
+  let me = "";
+  if (s) {
+    const mine = Math.min(CFG.stamps.filter(x => s.stamps && s.stamps[x.id]).length, total), d = r.dist || [];
+    const above = d.slice(mine + 1).reduce((a, b) => a + b, 0);
+    const pct = r.n ? Math.max(1, Math.ceil((above + 1) / r.n * 100)) : 100, tie = Math.max(0, (d[mine] || 1) - 1);
+    const hint = mine >= total ? "완주 성공! 정말 멋져요" : mine === 0 ? "첫 스탬프를 모으면 랭킹 경쟁 시작!"
+      : pct <= 50 ? `전체 상위 ${pct}%` : tie > 0 ? `스탬프 1개만 더 모으면 ${tie}명을 앞질러요!` : "조금만 더 힘내요!";
+    me = `<div class="rk-me">나의 스탬프 <b>${mine}</b> / ${total}개<span class="hint">${hint}</span></div>`;
+  }
+  const mk = h ? h.slice(0, 8) : "";
+  const top = (r.top || []).map(t => `<li class="${t.k === mk ? "me" : ""}"><span class="rk-no ${t.r <= 3 ? "g" + t.r : ""}">${t.r}</span>
+    <span class="rk-nm">${esc(t.cls)}반 ${esc(t.nm)}${t.k === mk ? "<em>나</em>" : ""}</span><span class="rk-c">${t.c}개</span></li>`).join("");
+  const cls = (r.classes || []).map((c, i) => `<div class="rk-cls ${s && c.cls == s.cls ? "me" : ""}"><span class="rk-no ${i < 3 ? "g" + (i + 1) : ""}">${i + 1}</span>
+    <b class="jua">${esc(c.cls)}반</b><div class="bar2"><i style="width:${total ? Math.round(c.avg / total * 100) : 0}%"></i></div><small>평균 ${c.avg}개</small></div>`).join("");
+  openSpop(`<div class="rk-head">${TROPHY}<h3 class="jua">STAMP TOUR 랭킹</h3><p>${fmtFull(r.at)} 기준 · ${r.n}명 참여</p></div>${me}
+    <h4>개인 TOP 10</h4>${top ? `<ol class="rk-list">${top}</ol>` : `<p class="help">아직 스탬프를 받은 학생이 없어요.</p>`}
+    ${cls ? `<h4>반별 순위 <small class="help">평균 스탬프</small></h4>${cls}` : ""}
+    <button class="btn coral" id="spx" style="width:100%;margin-top:16px">확인</button>`);
+}
 function showStudentLogin(msg = "") {
   stop();
   app.innerHTML = frame(`
@@ -527,14 +629,21 @@ function showStudentLogin(msg = "") {
   $("#sf").onsubmit = async e => {
     e.preventDefault();
     ac();   // 휴대폰은 버튼을 누를 때 소리 권한이 열림
+    stop();
     const cls = $("#cls").value, num = $("#num").value, pin = $("#pin").value;
     $("#err").textContent = "확인 중…";
     const h = await hashId(cls, num, pin);
-    let first = true;
-    unsub = DB.watchStudent(h, s => {
-      if (!s) { if (first) { stop(); $("#err").textContent = "반·번호·PIN을 다시 확인하세요."; } return; }
-      first = false; renderBoard(s, h);
+    let first = true, dead = false;
+    const u1 = DB.watchStudent(h, s => {
+      if (dead) return;
+      if (!s) { if (first) { dead = true; setTimeout(stop, 0); $("#err").textContent = "반·번호·PIN을 다시 확인하세요."; } return; }
+      first = false; ST.s = s; ST.h = h; schedulePop(renderBoard(s, h));
     });
+    const u2 = DB.watchRank(r => {
+      ST.rank = r; const b = $("#rkbtn"); if (b) b.style.display = r && r.on ? "" : "none";
+      if (ST.s) schedulePop(Math.max(300, ST.until - Date.now()));
+    });
+    unsub = () => { u1(); u2(); clearTimeout(ST.timer); ST = { s: null, h: null, rank: null, timer: null, until: 0 }; closeSpop(); };
   };
   $("#tlink").onclick = showTeacher;
 }
@@ -574,13 +683,15 @@ function renderBoard(s, h) {
     <div class="newmsg" id="newmsg"></div>
     <div class="stamps">${startTile}${html}${finishTile}</div>
     <div id="donebox"></div>
-    <p style="text-align:center;margin-top:22px"><button class="btn light sm" id="out">나가기</button></p>`,
+    <p style="text-align:center;margin-top:22px"><button class="btn sm rkbtn" id="rkbtn" style="display:${ST.rank && ST.rank.on ? "" : "none"}">🏆 랭킹 보기</button>
+      <button class="btn light sm" id="out">나가기</button></p>`,
     `<button class="sndbtn" id="snd" title="효과음">${sound ? "🔊" : "🔈"}</button>`);
   $("#out").onclick = () => showStudentLogin();
+  $("#rkbtn").onclick = () => { if (ST.rank && ST.rank.on) showRankPop(ST.rank, s, h); };
   $("#snd").onclick = () => { LS.set("st_sound", !soundOn()); $("#snd").textContent = soundOn() ? "🔊" : "🔈"; if (soundOn()) SFX.thump(); };
 
   const showDone = () => { if (done) $("#donebox").innerHTML = `<div class="done"><h3>스탬프 투어를 완성한 당신!</h3>고등학교를 향한 그 발걸음 성공적! 사제동행 가요제 날 시상합니다.</div>`; };
-  if (!newIds.length) { showDone(); return; }
+  if (!newIds.length) { showDone(); return 500; }
 
   $("#newmsg").textContent = newIds.length === 1 ? "새 스탬프가 도착했어요!" : `새 스탬프 ${newIds.length}개가 도착했어요!`;
   newIds.forEach((_, i) => {
@@ -599,10 +710,13 @@ function renderBoard(s, h) {
     showDone();
     if (done) { confetti(); SFX.fanfare(); const ft = $("#finishTile"); if (ft) ft.classList.add("goal"); }
   }, (BASE + GAP * newIds.length + 0.4) * 1000);
+  return (BASE + GAP * newIds.length + (done ? 2.2 : 1)) * 1000;   // 애니메이션이 끝난 뒤 팝업
 }
 
 /* ================= 교사 ================= */
-let T = { tab: "status", cls: "all", q: "", onlyNot: false, qs: null, qcls: null, students: [], pins: {} };
+let T = { tab: "status", cls: "all", q: "", onlyNot: false, qs: null, qcls: null, students: [], pins: {},
+  rank: null, rcls: "all", nth: null, ncls: "all", nitem: "", nskip: new Set(),
+  nmsg: "아직 늦지 않았어! 남은 활동에서 스탬프를 하나씩 모아 보자.\n선생님이 응원할게!" };
 let LAST = null;   // 되돌리기용 마지막 작업
 const confirmOff = () => LS.get("st_confirmOff", true);
 
@@ -637,6 +751,8 @@ function teacherHome() {
     <div class="tabs">
       <button class="tab" data-t="status">스탬프 현황</button>
       <button class="tab" data-t="quick">빠른 찍기</button>
+      <button class="tab" data-t="rank">랭킹 · 팝업</button>
+      <button class="tab" data-t="care">독려 명단</button>
       <button class="tab" data-t="roster">명단 · PIN</button>
       <button class="tab" data-t="config">스탬프 항목</button>
       <button class="tab" data-t="admin">기록 · 초기화</button>
@@ -646,13 +762,15 @@ function teacherHome() {
   $("#lo").onclick = async () => { await DB.logout(); USER = null; showStudentLogin(); };
   $("#sv").onclick = () => showStudentLogin();
   app.querySelectorAll(".tab[data-t]").forEach(b => b.onclick = () => { T.tab = b.dataset.t; drawTeacher(); });
-  unsub = DB.watchAll((st, pins) => { T.students = st; T.pins = pins; drawTeacher(); refreshModal(); });
+  const u1 = DB.watchAll((st, pins) => { T.students = st; T.pins = pins; drawTeacher(); refreshModal(); });
+  const u2 = DB.watchRank(r => { T.rank = r; if (T.tab === "rank") drawTeacher(); });
+  unsub = () => { u1(); u2(); };
 }
 
 function drawTeacher() {
   app.querySelectorAll(".tab[data-t]").forEach(b => b.classList.toggle("on", b.dataset.t === T.tab));
   const v = $("#tv"); if (!v) return;
-  ({ status: drawStatus, quick: drawQuick, roster: drawRoster, config: drawConfig, admin: drawAdmin })[T.tab](v);
+  ({ status: drawStatus, quick: drawQuick, rank: drawRank, care: drawCare, roster: drawRoster, config: drawConfig, admin: drawAdmin })[T.tab](v);
 }
 
 const has = (s, sid) => !!(s.stamps && s.stamps[sid]);
@@ -788,6 +906,138 @@ function drawQuick(v) {
   };
   $("#numOn").onclick = () => byNums(true);
   $("#numOff").onclick = () => byNums(false);
+}
+
+/* ---------- 탭: 랭킹 · 팝업 ---------- */
+const mask = n => { const a = [...String(n || "").trim()]; if (a.length <= 1) return a.join(""); if (a.length === 2) return a[0] + "*"; return a[0] + "*".repeat(a.length - 2) + a[a.length - 1]; };
+const lastAtOf = s => Math.max(0, ...CFG.stamps.map(x => has(s, x.id) ? toMs(s.stamps[x.id]) : 0));
+function rankRows(students) {      // 스탬프 많은 순 → 같으면 먼저 모은 학생
+  return students.map(s => ({ s, c: cntOf(s), last: lastAtOf(s) }))
+    .sort((a, b) => b.c - a.c || (a.last || Infinity) - (b.last || Infinity) || a.s.cls - b.s.cls || a.s.num - b.s.num)
+    .map((x, i) => ({ ...x, r: i + 1 }));
+}
+function classStats(students) {
+  const total = CFG.stamps.length, m = {};
+  students.forEach(s => { const c = cntOf(s), o = m[s.cls] || (m[s.cls] = { cls: s.cls, n: 0, sum: 0, full: 0 }); o.n++; o.sum += c; if (total && c === total) o.full++; });
+  return Object.values(m).map(o => ({ cls: o.cls, n: o.n, avg: Math.round(o.sum / o.n * 10) / 10, full: o.full, rate: Math.round(o.full / o.n * 100) }))
+    .sort((a, b) => b.avg - a.avg || b.rate - a.rate || a.cls - b.cls);
+}
+function buildRank() {               // 학생 화면에 공개되는 요약본 (이름 가운데 글자 가림)
+  const total = CFG.stamps.length, rows = rankRows(T.students), dist = Array(total + 1).fill(0);
+  rows.forEach(x => dist[Math.min(x.c, total)]++);
+  return { on: true, at: Date.now(), total, n: rows.length, dist,
+    top: rows.filter(x => x.c > 0).slice(0, 10).map(x => ({ r: x.r, cls: x.s.cls, nm: mask(x.s.name), c: x.c, k: x.s.id.slice(0, 8) })),
+    classes: classStats(T.students) };
+}
+function drawRank(v) {
+  const total = CFG.stamps.length, cls = classesOf(), all = rankRows(T.students), cs = classStats(T.students), R = T.rank;
+  if (T.rcls !== "all" && !cls.includes(Number(T.rcls))) T.rcls = "all";
+  const rows = T.rcls === "all" ? all : all.filter(x => x.s.cls == T.rcls);
+  v.innerHTML = `
+    <div class="sec">
+      <h3 class="jua">학생 화면에 랭킹 팝업 띄우기</h3>
+      <p class="help">누르는 순간의 순위가 학생 화면에 팝업으로 뜹니다. 지금 접속해 있는 학생에게는 바로, 나중에 PIN으로 들어오는 학생에게는 들어올 때 한 번 뜹니다.
+        학생 화면에는 이름 가운데 글자가 가려져 나오고(예: 김*람), 내려가기 전까지 <b>랭킹 보기</b> 버튼으로 다시 볼 수 있어요.</p>
+      <p class="help" style="margin:4px 0 8px">현재 상태: ${R && R.on ? `<b style="color:var(--green)">띄우는 중</b> · ${fmtFull(R.at)} 기준 순위` : "<b>내려가 있음</b>"}</p>
+      <div class="toolbar">
+        <button class="btn coral sm" id="rkPub">${R && R.on ? "최신 순위로 다시 띄우기" : "랭킹 팝업 띄우기"}</button>
+        <button class="btn light sm" id="rkPrev">학생 화면 미리보기</button>
+        ${R && R.on ? `<button class="btn danger sm" id="rkOff">팝업 내리기</button>` : ""}
+      </div>
+    </div>
+    <div class="sec">
+      <h3 class="jua">반별 순위</h3>
+      ${cs.length ? `<div class="tblwrap" style="max-height:none"><table><thead><tr><th>순위</th><th>반</th><th>인원</th><th>평균 스탬프</th><th>완주</th></tr></thead><tbody>
+        ${cs.map((c, i) => `<tr><td><span class="rk-no ${i < 3 ? "g" + (i + 1) : ""}">${i + 1}</span></td><td>${c.cls}반</td><td>${c.n}명</td><td>${c.avg}개</td><td>${c.full}명 (${c.rate}%)</td></tr>`).join("")}
+        </tbody></table></div>` : `<p class="help">명단을 먼저 등록해 주세요.</p>`}
+    </div>
+    <div class="sec">
+      <h3 class="jua">개인 순위</h3>
+      <div class="toolbar">
+        <button class="tab ${T.rcls === "all" ? "on" : ""}" data-rc="all">전체</button>
+        ${cls.map(c => `<button class="tab ${T.rcls == c ? "on" : ""}" data-rc="${c}">${c}반</button>`).join("")}
+      </div>
+      <p class="help" style="margin:0 0 8px">스탬프가 많은 순서이고, 개수가 같으면 먼저 모은 학생이 앞입니다. 이름을 누르면 상세 창이 열려요.</p>
+      ${rows.length ? `<div class="tblwrap"><table><thead><tr><th>순위</th><th>반</th><th>번호</th><th>이름</th><th>스탬프</th><th>마지막 획득</th></tr></thead><tbody>
+        ${rows.map(x => `<tr><td><span class="rk-no ${x.r <= 3 ? "g" + x.r : ""}">${x.r}</span></td><td>${x.s.cls}</td><td>${x.s.num}</td>
+          <td class="nm"><button class="namebtn" data-open="${x.s.id}">${esc(x.s.name)}</button></td>
+          <td><span class="pill ${total && x.c === total ? "full" : ""}">${x.c}</span></td><td>${x.last ? fmtFull(x.last) : "-"}</td></tr>`).join("")}
+        </tbody></table></div>` : ""}
+    </div>`;
+  v.querySelectorAll("[data-rc]").forEach(b => b.onclick = () => { T.rcls = b.dataset.rc; drawRank(v); });
+  v.querySelectorAll("[data-open]").forEach(b => b.onclick = () => openStudent(b.dataset.open));
+  const fail = e => { console.error(e); toast("실패: 교사 로그인·보안 규칙을 확인하세요"); };
+  $("#rkPub").onclick = async () => {
+    if (!T.students.length) return toast("명단을 먼저 등록하세요");
+    if (!confirm("지금 순위로 학생 화면에 랭킹 팝업을 띄울까요?")) return;
+    try { await DB.saveRank(buildRank()); toast("랭킹 팝업을 띄웠어요"); } catch (e) { fail(e); }
+  };
+  $("#rkPrev").onclick = () => showRankPop(buildRank(), null, null);
+  if ($("#rkOff")) $("#rkOff").onclick = async () => { try { await DB.saveRank({ on: false, at: Date.now() }); toast("팝업을 내렸어요"); } catch (e) { fail(e); } };
+}
+
+/* ---------- 탭: 독려 명단 (+ 응원 팝업) ---------- */
+function drawCare(v) {
+  const list = CFG.stamps, total = list.length, cls = classesOf();
+  if (T.nth === null || T.nth > total) T.nth = Math.min(2, Math.max(0, total - 1));
+  if (T.nitem && !list.some(x => x.id === T.nitem)) T.nitem = "";
+  if (T.ncls !== "all" && !cls.includes(Number(T.ncls))) T.ncls = "all";
+  const targets = T.students.filter(s => cntOf(s) <= T.nth && (T.ncls === "all" || s.cls == T.ncls) && (!T.nitem || !has(s, T.nitem)))
+    .sort((a, b) => cntOf(a) - cntOf(b) || a.cls - b.cls || a.num - b.num);
+  const sel = targets.filter(s => !T.nskip.has(s.id));
+  const pending = T.students.filter(s => s.nudge && s.nudge.at);
+  const zero = targets.filter(s => cntOf(s) === 0).length;
+  const byCls = cls.map(c => ({ c, n: targets.filter(s => s.cls == c).length })).filter(x => x.n);
+  const missing = s => list.filter(x => !has(s, x.id));
+  v.innerHTML = `
+    <p class="help" style="margin:0 0 10px">스탬프를 적게 모은 학생을 찾아 개별 지도하거나 응원 팝업을 보낼 수 있어요. 적게 모은 학생부터 보여 줍니다.</p>
+    <div class="toolbar">
+      <select id="nth">${Array.from({ length: total + 1 }, (_, i) => `<option value="${i}" ${i === T.nth ? "selected" : ""}>${i === total ? "개수 상관없이" : `스탬프 ${i}개 이하`}</option>`).join("")}</select>
+      <select id="nitem"><option value="">모든 항목</option>${list.map(x => `<option value="${x.id}" ${T.nitem === x.id ? "selected" : ""}>'${esc(x.name)}' 못 받은 학생</option>`).join("")}</select>
+      <select id="ncls"><option value="all">전체 반</option>${cls.map(c => `<option value="${c}" ${T.ncls == c ? "selected" : ""}>${c}반</option>`).join("")}</select>
+      <button class="btn light sm" id="ncsv" style="margin-left:auto">명단 CSV 저장</button>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="k">독려 대상</div><div class="v">${targets.length}명</div></div>
+      <div class="card"><div class="k">스탬프 0개</div><div class="v">${zero}명</div></div>
+      <div class="card"><div class="k">응원 팝업 보낸 학생</div><div class="v">${pending.length}명</div></div>
+      <div class="card"><div class="k">반별 대상</div><div class="help" style="margin-top:4px">${byCls.length ? byCls.map(x => `${x.c}반 <b>${x.n}</b>`).join(" · ") : "-"}</div></div>
+    </div>
+    ${targets.length ? `<div class="tblwrap"><table><thead><tr><th><input type="checkbox" id="nall" ${sel.length === targets.length ? "checked" : ""} title="전체 선택"></th>
+      <th>반</th><th>번호</th><th>이름</th><th>스탬프</th><th>못 받은 스탬프</th><th>응원 팝업</th></tr></thead><tbody>
+      ${targets.map(s => `<tr><td><input type="checkbox" data-nk="${s.id}" ${T.nskip.has(s.id) ? "" : "checked"}></td><td>${s.cls}</td><td>${s.num}</td>
+        <td class="nm"><button class="namebtn" data-open="${s.id}">${esc(s.name)}</button></td><td><span class="pill">${cntOf(s)} / ${total}</span></td>
+        <td class="nm" style="white-space:normal;min-width:220px;font-size:13px;color:var(--brown2)">${missing(s).map(x => esc(x.name)).join(", ") || "-"}</td>
+        <td>${s.nudge ? `${fmtDay(s.nudge.at)} 보냄` : "-"}</td></tr>`).join("")}
+      </tbody></table></div>` : `<p class="help">조건에 맞는 학생이 없어요. 모두 잘하고 있네요!</p>`}
+    <div class="sec" style="margin-top:14px">
+      <h3 class="jua">응원 팝업 보내기</h3>
+      <p class="help">위 명단에서 체크한 학생이 PIN으로 들어오면 응원 메시지가 한 번 뜹니다. 다른 학생에게는 보이지 않아요.</p>
+      <div class="field" style="margin:6px 0 8px"><label>응원 메시지</label><textarea id="nmsg" style="min-height:84px">${esc(T.nmsg)}</textarea></div>
+      <div class="toolbar">
+        <button class="btn coral sm" id="nSend" ${sel.length ? "" : "disabled"}>체크한 ${sel.length}명에게 보내기</button>
+        ${pending.length ? `<button class="btn danger sm" id="nClear">보낸 응원 팝업 모두 취소 (${pending.length}명)</button>` : ""}
+      </div>
+    </div>`;
+  const fail = e => { console.error(e); toast("실패: 교사 로그인·보안 규칙을 확인하세요"); };
+  $("#nth").onchange = e => { T.nth = Number(e.target.value); drawCare(v); };
+  $("#nitem").onchange = e => { T.nitem = e.target.value; drawCare(v); };
+  $("#ncls").onchange = e => { T.ncls = e.target.value; drawCare(v); };
+  v.querySelectorAll("[data-open]").forEach(b => b.onclick = () => openStudent(b.dataset.open));
+  v.querySelectorAll("[data-nk]").forEach(c => c.onchange = () => { if (c.checked) T.nskip.delete(c.dataset.nk); else T.nskip.add(c.dataset.nk); drawCare(v); });
+  if ($("#nall")) $("#nall").onchange = e => { targets.forEach(s => e.target.checked ? T.nskip.delete(s.id) : T.nskip.add(s.id)); drawCare(v); };
+  $("#nmsg").oninput = e => { T.nmsg = e.target.value; };
+  $("#ncsv").onclick = () => download(`독려명단_${today()}.csv`, csvText([["반", "번호", "이름", "스탬프", "못 받은 스탬프", "응원 팝업"],
+    ...targets.map(s => [s.cls, s.num, s.name, cntOf(s), missing(s).map(x => x.name).join(", "), s.nudge ? fmtDay(s.nudge.at) + " 보냄" : ""])]));
+  $("#nSend").onclick = async () => {
+    const msg = $("#nmsg").value.trim(); if (!msg) return toast("메시지를 입력하세요");
+    if (!confirm(`${sel.length}명에게 응원 팝업을 보낼까요?`)) return;
+    try { await DB.setNudge(sel.map(s => s.id), { msg, at: Date.now() }); toast(`${sel.length}명에게 보냈어요`); } catch (e) { fail(e); }
+  };
+  if ($("#nClear")) $("#nClear").onclick = async () => {
+    if (!confirm("보낸 응원 팝업을 모두 취소할까요? 아직 못 본 학생에게는 뜨지 않게 됩니다.")) return;
+    try { await DB.setNudge(pending.map(s => s.id), null); toast("취소했어요"); } catch (e) { fail(e); }
+  };
 }
 
 /* ---------- 학생 상세 창 ---------- */
@@ -992,7 +1242,7 @@ function drawAdmin(v) {
   };
   $("#rEverything").onclick = () => {
     if (!confirm("명단, PIN, 스탬프 기록을 모두 삭제할까요? 학생들이 가진 PIN도 쓸 수 없게 됩니다.") || !typed("전부삭제")) return;
-    saveBackup("전부삭제전_"); run(() => DB.deleteAll(), "모든 학생 데이터를 삭제했어요");
+    saveBackup("전부삭제전_"); run(async () => { await DB.deleteAll(); await DB.saveRank({ on: false, at: Date.now() }); }, "모든 학생 데이터를 삭제했어요");
   };
 }
 
