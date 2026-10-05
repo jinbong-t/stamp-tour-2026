@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4a2c21">
-<title>성공하는 인생의 비밀 · STAMP TOUR</title>
+<title>성공하는 인생의 비밀 · STAMP TOUR | 3학년부 학교급 전환기 교육 활동</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -37,6 +37,7 @@
   .clip:after{content:"";position:absolute;left:50%;top:14px;transform:translateX(-50%);width:110px;height:34px;
     border:7px solid var(--gold);border-top:none;border-radius:0 0 16px 16px}
   .sub{color:var(--coral);text-align:center;margin:8px 0 2px;font-size:17px}
+  .kicker{display:table;margin:14px auto 2px;padding:5px 14px;border-radius:99px;background:#f6ead9;border:1px solid var(--line);color:var(--brown2);font-size:13px;font-weight:700;letter-spacing:.5px}
   .title{color:var(--brown);text-align:center;margin:0 0 4px;font-size:34px}
   .footer{text-align:center;color:var(--muted);font-size:13px;margin-top:22px;letter-spacing:2px}
   .btn{border:none;border-radius:12px;padding:12px 18px;font-size:16px;background:var(--brown);color:#fff}
@@ -202,7 +203,7 @@
     .wrap{padding:14px 10px 16px}
     .board{padding:24px 12px 18px;border-radius:18px;box-shadow:0 0 0 6px #efe0c8,0 8px 20px rgba(74,44,33,.16);margin-top:30px}
     .clip{width:130px;height:38px;top:-24px} .clip:after{width:84px;height:28px;border-width:6px;top:12px}
-    .sub{font-size:14px} .title{font-size:25px}
+    .sub{font-size:14px} .title{font-size:25px} .kicker{font-size:12px;padding:4px 12px;margin-top:12px}
     .who{font-size:15px} .who b{font-size:19px}
     .count{font-size:16px} .count .big{font-size:38px}
     .bar{height:12px;margin:6px 4px 18px}
@@ -535,6 +536,7 @@ const stop = () => { if (unsub) { unsub(); unsub = null; } };
 
 function frame(inner, extra = "") {
   return `<div class="board" id="board"><div class="clip"></div>${extra}
+    <div class="kicker">3학년부 · 학교급 전환기 교육 활동</div>
     <p class="sub jua">발자국마다 성공 경험을! STAMP TOUR</p>
     <h1 class="title">${esc(CFG.title || APP_TITLE)}</h1>
     ${inner}
